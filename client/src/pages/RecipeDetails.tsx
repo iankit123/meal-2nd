@@ -1,6 +1,6 @@
 import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Heart, Edit, Trash2 } from "lucide-react";
+import { ArrowLeft, Heart, Edit, Trash2, ExternalLink, Instagram } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -185,65 +185,51 @@ export default function RecipeDetails() {
             />
           </Button>
         </div>
-
-        {/* Description */}
-        <p className="text-gray-600 text-base leading-relaxed">
-          {recipe.description}
-        </p>
       </div>
-
-      {/* Ingredients */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Ingredients</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-2">
-            {recipe.ingredients.map((ingredient, index) => (
-              <li key={index} className="flex justify-between text-sm">
-                <span>{ingredient.name}</span>
-                {ingredient.qty && (
-                  <span className="text-gray-500">{ingredient.qty}</span>
-                )}
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
 
       {/* Instructions */}
       <Card>
         <CardHeader>
-          <CardTitle>Instructions</CardTitle>
+          <CardTitle>Recipe Instructions</CardTitle>
         </CardHeader>
         <CardContent>
-          <ol className="space-y-4">
-            {recipe.steps.map((step, index) => (
-              <li key={index} className="flex text-sm">
-                <span className="bg-green-400 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-medium mr-3 mt-0.5 flex-shrink-0">
-                  {index + 1}
-                </span>
-                <span className="leading-relaxed">{step}</span>
-              </li>
-            ))}
-          </ol>
+          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+            {recipe.instructions}
+          </p>
         </CardContent>
       </Card>
 
-      {/* Tags */}
-      {recipe.tags.length > 0 && (
+      {/* Links */}
+      {(recipe.instagramLink || recipe.recipeLink) && (
         <Card>
           <CardHeader>
-            <CardTitle>Tags</CardTitle>
+            <CardTitle>Links</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {recipe.tags.map((tag, index) => (
-                <Badge key={index} variant="secondary">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
+          <CardContent className="space-y-3">
+            {recipe.instagramLink && (
+              <a
+                href={recipe.instagramLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-3 p-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-colors"
+              >
+                <Instagram className="w-5 h-5" />
+                <span className="font-medium">View on Instagram</span>
+                <ExternalLink className="w-4 h-4 ml-auto" />
+              </a>
+            )}
+            {recipe.recipeLink && (
+              <a
+                href={recipe.recipeLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-3 p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                <ExternalLink className="w-5 h-5" />
+                <span className="font-medium">View Original Recipe</span>
+                <ExternalLink className="w-4 h-4 ml-auto" />
+              </a>
+            )}
           </CardContent>
         </Card>
       )}

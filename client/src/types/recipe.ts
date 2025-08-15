@@ -1,18 +1,13 @@
-export interface Ingredient {
-  name: string;
-  qty?: string;
-}
 
 export interface Recipe {
   id: string;
   title: string;
-  description: string;
+  instructions: string;
   mealType: "breakfast" | "lunchDinner" | "snack";
-  tags: string[];
-  ingredients: Ingredient[];
-  steps: string[];
   imageUrl: string;
   imagePath: string;
+  instagramLink?: string;
+  recipeLink?: string;
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;

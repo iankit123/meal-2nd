@@ -14,18 +14,17 @@ import {
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { db, storage, auth } from "./firebase";
-import { Recipe, Ingredient } from "../types/recipe";
+import { Recipe } from "../types/recipe";
 import { v4 as uuidv4 } from "uuid";
 
 const RECIPES_COLLECTION = "recipes";
 
 export interface RecipeFormData {
   title: string;
-  description: string;
+  instructions: string;
   mealType: Recipe['mealType'];
-  tags: string[];
-  ingredients: Ingredient[];
-  steps: string[];
+  instagramLink?: string;
+  recipeLink?: string;
   image?: File;
 }
 
@@ -49,11 +48,10 @@ export const createRecipe = async (formData: RecipeFormData): Promise<string> =>
 
   const recipeData = {
     title: formData.title,
-    description: formData.description,
+    instructions: formData.instructions,
     mealType: formData.mealType,
-    tags: formData.tags,
-    ingredients: formData.ingredients,
-    steps: formData.steps,
+    instagramLink: formData.instagramLink || "",
+    recipeLink: formData.recipeLink || "",
     imageUrl,
     imagePath,
     createdAt: serverTimestamp(),
@@ -98,11 +96,10 @@ export const updateRecipe = async (id: string, formData: RecipeFormData, existin
   const recipeRef = doc(db, RECIPES_COLLECTION, id);
   const updateData: any = {
     title: formData.title,
-    description: formData.description,
+    instructions: formData.instructions,
     mealType: formData.mealType,
-    tags: formData.tags,
-    ingredients: formData.ingredients,
-    steps: formData.steps,
+    instagramLink: formData.instagramLink || "",
+    recipeLink: formData.recipeLink || "",
     updatedAt: serverTimestamp(),
   };
 
@@ -219,9 +216,7 @@ export const searchRecipes = (recipes: Recipe[], searchTerm: string): Recipe[] =
   const term = searchTerm.toLowerCase();
   return recipes.filter(recipe => 
     recipe.title.toLowerCase().includes(term) ||
-    recipe.description.toLowerCase().includes(term) ||
-    recipe.tags.some(tag => tag.toLowerCase().includes(term)) ||
-    recipe.ingredients.some(ingredient => ingredient.name.toLowerCase().includes(term))
+    recipe.instructions.toLowerCase().includes(term)
   );
 };
 
