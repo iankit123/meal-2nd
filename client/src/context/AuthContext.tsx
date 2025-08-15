@@ -6,12 +6,14 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   authError: boolean;
+  isAnonymous: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   authError: false,
+  isAnonymous: false,
 });
 
 export const useAuth = () => {
@@ -30,6 +32,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState(false);
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   useEffect(() => {
     const initAuth = async () => {
@@ -57,6 +60,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (user) {
         setUser(user);
         setAuthError(false);
+        setIsAnonymous(user.isAnonymous || false);
+        console.log('Firebase Auth working! User ID:', user.uid);
       }
       setLoading(false);
     });
@@ -68,6 +73,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user,
     loading,
     authError,
+    isAnonymous,
   };
 
   return (
