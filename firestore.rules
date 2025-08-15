@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow reads to everyone
+    match /{document=**} {
+      allow read: if true;
+    }
+    
+    // Recipes collection
+    match /recipes/{recipeId} {
+      // Allow authenticated users to create recipes
+      allow create: if request.auth != null;
+      
+      // Allow recipe creator to update and delete
+      allow update, delete: if request.auth != null && 
+        resource.data.createdBy == request.auth.uid;
+      
+      // Allow authenticated users to update bookmarkedBy array
+      allow update: if request.auth != null && 
+        request.writeFields.hasOnly(['bookmarkedBy']) &&
+        (request.auth.uid in request.resource.data.bookmarkedBy) != 
+        (request.auth.uid in resource.data.bookmarkedBy);
+    }
+    
+    // Week plans collection
+    match /weekPlans/{userId} {
+      // Allow users to create, read, update their own week plan
+      allow read, write: if request.auth != null && 
+        request.auth.uid == userId;
+    }
+  }
+}
