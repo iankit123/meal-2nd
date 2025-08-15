@@ -8,15 +8,18 @@ import SearchBar from "../components/SearchBar";
 import CategoryChips from "../components/CategoryChips";
 import RecipeGrid from "../components/RecipeGrid";
 import EmptyState from "../components/EmptyState";
+import AuthSetupNotice from "../components/AuthSetupNotice";
 import { getAllRecipes, toggleBookmark, searchRecipes, filterRecipesByMealType } from "../lib/recipes";
 import { CategoryFilter } from "../types/recipe";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "../context/AuthContext";
 
 export default function AllMeals() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("all");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { authError } = useAuth();
 
   const { data: recipes = [], isLoading } = useQuery({
     queryKey: ['/api/recipes'],
@@ -57,6 +60,7 @@ export default function AllMeals() {
 
   return (
     <div className="space-y-4">
+      <AuthSetupNotice show={authError} />
       {/* Search Bar and Add Recipe Button */}
       <div className="flex space-x-3">
         <SearchBar

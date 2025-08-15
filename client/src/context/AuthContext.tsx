@@ -5,11 +5,13 @@ import { auth, initializeAuth } from "../lib/firebase";
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  authError: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  authError: false,
 });
 
 export const useAuth = () => {
@@ -27,22 +29,35 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState(false);
 
   useEffect(() => {
     const initAuth = async () => {
       try {
         // Initialize anonymous authentication
-        await initializeAuth();
+        const authUser = await initializeAuth();
+        if (!authUser) {
+          setAuthError(true);
+          // Create a temporary fake user for development
+          setUser({ uid: 'temp-user-' + Date.now() } as User);
+        }
       } catch (error) {
         console.error("Failed to initialize auth:", error);
+        setAuthError(true);
+        // Create a temporary fake user for development
+        setUser({ uid: 'temp-user-' + Date.now() } as User);
       }
+      setLoading(false);
     };
 
     initAuth();
 
     // Listen for auth state changes
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+      if (user) {
+        setUser(user);
+        setAuthError(false);
+      }
       setLoading(false);
     });
 
@@ -52,6 +67,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const value = {
     user,
     loading,
+    authError,
   };
 
   return (

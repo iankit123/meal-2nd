@@ -18,9 +18,9 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-// Initialize anonymous authentication
-export const initializeAuth = async (): Promise<User> => {
-  return new Promise((resolve, reject) => {
+// Initialize anonymous authentication with fallback
+export const initializeAuth = async (): Promise<User | null> => {
+  return new Promise((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         unsubscribe();
@@ -31,8 +31,10 @@ export const initializeAuth = async (): Promise<User> => {
           unsubscribe();
           resolve(result.user);
         } catch (error) {
+          console.error('Firebase Auth not configured properly:', error);
           unsubscribe();
-          reject(error);
+          // Resolve with null instead of rejecting to allow app to continue
+          resolve(null);
         }
       }
     });

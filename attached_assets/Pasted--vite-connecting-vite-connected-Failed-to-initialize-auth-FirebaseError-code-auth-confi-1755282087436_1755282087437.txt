@@ -1,0 +1,22 @@
+[vite] connecting...
+[vite] connected.
+Failed to initialize auth: 
+_FirebaseError {code: "auth/configuration-not-found", customData: {…}, name: "FirebaseError"}
+
+[2025-08-15T18:20:51.044Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x4667c79d transport errored. Name: undefined Message: undefined
+[2025-08-15T18:20:52.240Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x4667c79e transport errored. Name: undefined Message: undefined
+[2025-08-15T18:20:53.506Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x4667c79f transport errored. Name: undefined Message: undefined
+[2025-08-15T18:20:54.924Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x4667c7a0 transport errored. Name: undefined Message: undefined
+[2025-08-15T18:20:57.033Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x4667c7a1 transport errored. Name: undefined Message: undefined
+[2025-08-15T18:21:02.052Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x4667c7a2 transport errored. Name: undefined Message: undefined
+[2025-08-15T18:21:05.847Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x4667c7a3 transport errored. Name: undefined Message: undefined
+User must be authenticated
+at Object.createRecipe [as mutationFn] (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/src/lib/recipes.ts:21:11)
+at Object.fn (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=00dfa21d:1189:29)
+at run (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=00dfa21d:494:49)
+at Object.start (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=00dfa21d:536:9)
+at _a6.execute (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=00dfa21d:1225:56)
+at async handleSubmit (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/src/pages/AddRecipe.tsx:47:5)
+at async handleFormSubmit (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/src/components/RecipeForm.tsx:60:5)
+at async https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CXJMC5RA.js?v=00dfa21d:1465:9
+[2025-08-15T18:21:14.716Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x4667c7a4 transport errored. Name: undefined Message: undefined
