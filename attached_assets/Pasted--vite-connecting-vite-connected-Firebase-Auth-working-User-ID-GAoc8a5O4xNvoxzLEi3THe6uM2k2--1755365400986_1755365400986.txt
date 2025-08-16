@@ -1,0 +1,19 @@
+[vite] connecting...
+[vite] connected.
+Firebase Auth working! User ID: GAoc8a5O4xNvoxzLEi3THe6uM2k2
+[2025-08-16T17:28:58.004Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x446f2480 transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:00.005Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x446f2481 transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:02.016Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x446f2482 transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:04.005Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x446f2483 transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:07.196Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x446f2484 transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:10.807Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x446f2485 transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:15.591Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x446f2486 transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:24.101Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Listen' stream 0x446f2487 transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:30.015Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Write' stream 0x446f2488 transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:31.177Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Write' stream 0x446f2489 transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:32.353Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Write' stream 0x446f248a transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:34.153Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Write' stream 0x446f248b transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:36.312Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Write' stream 0x446f248c transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:38.761Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Write' stream 0x446f248d transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:44.089Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Write' stream 0x446f248f transport errored. Name: undefined Message: undefined
+[2025-08-16T17:29:55.242Z]  @firebase/firestore: Firestore (12.1.0): WebChannelConnection RPC 'Write' stream 0x446f2490 transport errored. Name: undefined Message: undefined
