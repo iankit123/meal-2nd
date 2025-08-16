@@ -172,12 +172,28 @@ export const getRecipeById = async (id: string): Promise<Recipe | null> => {
   return null;
 };
 
-export const toggleBookmark = async (recipeId: string): Promise<void> => {
+export const toggleBookmark = async (recipeId: string, isCurrentlyBookmarked?: boolean): Promise<void> => {
   if (!auth.currentUser) {
     throw new Error("User must be authenticated");
   }
 
   const recipeRef = doc(db, RECIPES_COLLECTION, recipeId);
+  
+  // If we know the current state, skip the read operation
+  if (isCurrentlyBookmarked !== undefined) {
+    if (isCurrentlyBookmarked) {
+      await updateDoc(recipeRef, {
+        bookmarkedBy: arrayRemove(auth.currentUser.uid),
+      });
+    } else {
+      await updateDoc(recipeRef, {
+        bookmarkedBy: arrayUnion(auth.currentUser.uid),
+      });
+    }
+    return;
+  }
+
+  // Fallback: read first if state unknown (backwards compatibility)
   const recipeSnap = await getDoc(recipeRef);
   
   if (!recipeSnap.exists()) {

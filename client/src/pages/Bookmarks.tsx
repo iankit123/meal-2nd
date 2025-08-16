@@ -9,8 +9,9 @@ import CategoryChips from "../components/CategoryChips";
 import RecipeGrid from "../components/RecipeGrid";
 import EmptyState from "../components/EmptyState";
 import { getBookmarkedRecipes, toggleBookmark, searchRecipes, filterRecipesByMealType } from "../lib/recipes";
-import { CategoryFilter } from "../types/recipe";
+import { CategoryFilter, Recipe } from "../types/recipe";
 import { useToast } from "@/hooks/use-toast";
+import { auth } from "../lib/firebase";
 
 export default function Bookmarks() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,20 +25,70 @@ export default function Bookmarks() {
   });
 
   const toggleBookmarkMutation = useMutation({
-    mutationFn: toggleBookmark,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/bookmarks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/recipes'] });
-      toast({
-        title: "Success",
-        description: "Bookmark updated",
+    mutationFn: ({ recipeId, isCurrentlyBookmarked }: { recipeId: string; isCurrentlyBookmarked: boolean }) =>
+      toggleBookmark(recipeId, isCurrentlyBookmarked),
+    onMutate: async ({ recipeId, isCurrentlyBookmarked }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/api/bookmarks'] });
+      await queryClient.cancelQueries({ queryKey: ['/api/recipes'] });
+      
+      // Snapshot the previous values
+      const previousBookmarks = queryClient.getQueryData(['/api/bookmarks']);
+      const previousRecipes = queryClient.getQueryData(['/api/recipes']);
+      
+      // Optimistically update both caches
+      queryClient.setQueryData(['/api/bookmarks'], (old: Recipe[]) => {
+        if (!old || !auth.currentUser?.uid) return old;
+        
+        if (isCurrentlyBookmarked) {
+          // Remove from bookmarks (it's being unbookmarked)
+          return old.filter(recipe => recipe.id !== recipeId);
+        }
+        return old; // Recipe wasn't in bookmarks, so no change
       });
+      
+      queryClient.setQueryData(['/api/recipes'], (old: Recipe[]) => {
+        if (!old || !auth.currentUser?.uid) return old;
+        
+        return old.map(recipe => {
+          if (recipe.id === recipeId) {
+            const bookmarkedBy = [...recipe.bookmarkedBy];
+            if (isCurrentlyBookmarked) {
+              // Remove bookmark
+              const index = bookmarkedBy.indexOf(auth.currentUser!.uid);
+              if (index > -1) bookmarkedBy.splice(index, 1);
+            } else {
+              // Add bookmark
+              if (!bookmarkedBy.includes(auth.currentUser!.uid)) {
+                bookmarkedBy.push(auth.currentUser!.uid);
+              }
+            }
+            return { ...recipe, bookmarkedBy };
+          }
+          return recipe;
+        });
+      });
+      
+      return { previousBookmarks, previousRecipes };
     },
-    onError: () => {
+    onError: (err, variables, context) => {
+      // Revert on error
+      if (context?.previousBookmarks) {
+        queryClient.setQueryData(['/api/bookmarks'], context.previousBookmarks);
+      }
+      if (context?.previousRecipes) {
+        queryClient.setQueryData(['/api/recipes'], context.previousRecipes);
+      }
       toast({
         title: "Error",
         description: "Failed to update bookmark",
         variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Bookmark updated",
       });
     },
   });
@@ -48,7 +99,11 @@ export default function Bookmarks() {
   }, [bookmarkedRecipes, selectedCategory, searchTerm]);
 
   const handleBookmarkToggle = (recipeId: string) => {
-    toggleBookmarkMutation.mutate(recipeId);
+    const recipe = bookmarkedRecipes.find(r => r.id === recipeId);
+    if (!recipe || !auth.currentUser?.uid) return;
+    
+    const isCurrentlyBookmarked = recipe.bookmarkedBy.includes(auth.currentUser.uid);
+    toggleBookmarkMutation.mutate({ recipeId, isCurrentlyBookmarked });
   };
 
   const clearFilters = () => {

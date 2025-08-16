@@ -10,9 +10,10 @@ import RecipeGrid from "../components/RecipeGrid";
 import EmptyState from "../components/EmptyState";
 import AuthSetupNotice from "../components/AuthSetupNotice";
 import { getAllRecipes, toggleBookmark, searchRecipes, filterRecipesByMealType } from "../lib/recipes";
-import { CategoryFilter } from "../types/recipe";
+import { CategoryFilter, Recipe } from "../types/recipe";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "../context/AuthContext";
+import { auth } from "../lib/firebase";
 
 export default function AllMeals() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,19 +28,56 @@ export default function AllMeals() {
   });
 
   const toggleBookmarkMutation = useMutation({
-    mutationFn: toggleBookmark,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/recipes'] });
-      toast({
-        title: "Success",
-        description: "Bookmark updated",
+    mutationFn: ({ recipeId, isCurrentlyBookmarked }: { recipeId: string; isCurrentlyBookmarked: boolean }) =>
+      toggleBookmark(recipeId, isCurrentlyBookmarked),
+    onMutate: async ({ recipeId, isCurrentlyBookmarked }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/api/recipes'] });
+      
+      // Snapshot the previous value
+      const previousRecipes = queryClient.getQueryData(['/api/recipes']);
+      
+      // Optimistically update the cache
+      queryClient.setQueryData(['/api/recipes'], (old: Recipe[]) => {
+        if (!old || !auth.currentUser?.uid) return old;
+        
+        return old.map(recipe => {
+          if (recipe.id === recipeId) {
+            const bookmarkedBy = [...recipe.bookmarkedBy];
+            if (isCurrentlyBookmarked) {
+              // Remove bookmark
+              const index = bookmarkedBy.indexOf(auth.currentUser!.uid);
+              if (index > -1) bookmarkedBy.splice(index, 1);
+            } else {
+              // Add bookmark
+              if (!bookmarkedBy.includes(auth.currentUser!.uid)) {
+                bookmarkedBy.push(auth.currentUser!.uid);
+              }
+            }
+            return { ...recipe, bookmarkedBy };
+          }
+          return recipe;
+        });
       });
+      
+      return { previousRecipes };
     },
-    onError: () => {
+    onError: (err, variables, context) => {
+      // Revert on error
+      if (context?.previousRecipes) {
+        queryClient.setQueryData(['/api/recipes'], context.previousRecipes);
+      }
       toast({
         title: "Error",
         description: "Failed to update bookmark",
         variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      // Optional: Show success message
+      toast({
+        title: "Success",
+        description: "Bookmark updated",
       });
     },
   });
@@ -50,7 +88,11 @@ export default function AllMeals() {
   }, [recipes, selectedCategory, searchTerm]);
 
   const handleBookmarkToggle = (recipeId: string) => {
-    toggleBookmarkMutation.mutate(recipeId);
+    const recipe = recipes.find(r => r.id === recipeId);
+    if (!recipe || !auth.currentUser) return;
+    
+    const isCurrentlyBookmarked = recipe.bookmarkedBy.includes(auth.currentUser.uid);
+    toggleBookmarkMutation.mutate({ recipeId, isCurrentlyBookmarked });
   };
 
   const clearFilters = () => {
