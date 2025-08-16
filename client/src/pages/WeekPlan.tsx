@@ -45,14 +45,6 @@ export default function WeekPlan() {
         Back
       </Button>
 
-      {/* Page Title */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Week Plan</h1>
-        <p className="text-gray-600">
-          Plan your meals for the week by assigning recipes to specific days and meal times.
-        </p>
-      </div>
-
       {hasRecipes ? (
         weekPlan && (
           <WeekPlanGrid
