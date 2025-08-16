@@ -97,7 +97,7 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-full overflow-x-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-900">Weekly Meal Plan</h1>
@@ -111,47 +111,49 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
       </div>
 
       {/* Week Plan Grid */}
-      <div className="bg-white rounded-lg border overflow-hidden">
-        {/* Header Row */}
-        <div className="grid grid-cols-[80px_1fr_1fr_1fr] border-b bg-gray-50">
-          <div className="p-4 font-semibold text-purple-600">Day</div>
-          {mealTimes.map((mealTime) => (
-            <div key={mealTime.key} className="p-4 font-semibold text-purple-600 text-center">
-              {mealTime.label}
-            </div>
-          ))}
-        </div>
+      <div className="bg-white rounded-lg border overflow-hidden max-w-full">
+        {/* Mobile-optimized table structure */}
+        <div className="min-w-full">
+          {/* Header Row */}
+          <div className="grid grid-cols-[60px_repeat(3,1fr)] gap-0 border-b bg-gray-50 min-w-[320px]">
+            <div className="p-2 font-semibold text-purple-600 text-sm border-r">Day</div>
+            {mealTimes.map((mealTime) => (
+              <div key={mealTime.key} className="p-2 font-semibold text-purple-600 text-center text-sm border-r last:border-r-0">
+                {mealTime.label}
+              </div>
+            ))}
+          </div>
 
-        {/* Day Rows */}
-        {days.map((day) => (
-          <div key={day.key} className="grid grid-cols-[80px_1fr_1fr_1fr] border-b last:border-b-0 hover:bg-gray-25">
-            {/* Day Label */}
-            <div className="p-4 font-medium text-purple-600 border-r flex items-center">
-              {day.label}
-            </div>
+          {/* Day Rows */}
+          {days.map((day) => (
+            <div key={day.key} className="grid grid-cols-[60px_repeat(3,1fr)] gap-0 border-b last:border-b-0 hover:bg-gray-25 min-w-[320px]">
+              {/* Day Label */}
+              <div className="p-2 font-medium text-purple-600 border-r flex items-center justify-center text-sm">
+                {day.label}
+              </div>
 
-            {/* Meal Columns */}
-            {mealTimes.map((mealTime) => {
-              const assignedMeal = weekPlan.slots[day.key]?.[mealTime.key];
+              {/* Meal Columns */}
+              {mealTimes.map((mealTime) => {
+                const assignedMeal = weekPlan.slots[day.key]?.[mealTime.key];
 
-              return (
-                <div key={mealTime.key} className="p-3 border-r last:border-r-0">
-                  <Select
-                    value={assignedMeal || "none"}
-                    onValueChange={(value) => {
-                      handleMealChange(day.key, mealTime.key, value === "none" ? null : value);
-                    }}
-                  >
-                    <SelectTrigger 
-                      className={`w-full ${mealTime.color} border border-gray-200 rounded-lg text-sm font-medium text-gray-800 min-h-14 px-3 py-2`}
+                return (
+                  <div key={mealTime.key} className="p-2 border-r last:border-r-0">
+                    <Select
+                      value={assignedMeal || "none"}
+                      onValueChange={(value) => {
+                        handleMealChange(day.key, mealTime.key, value === "none" ? null : value);
+                      }}
                     >
-                      <SelectValue placeholder="Select a meal...">
-                        <div className="text-left leading-tight whitespace-normal break-words">
-                          {assignedMeal || "Select a meal..."}
-                        </div>
-                      </SelectValue>
-                      <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0 ml-2" />
-                    </SelectTrigger>
+                      <SelectTrigger 
+                        className={`w-full ${mealTime.color} border border-gray-200 rounded-lg text-xs font-medium text-gray-800 min-h-12 px-2 py-1`}
+                      >
+                        <SelectValue placeholder="Select...">
+                          <div className="text-left leading-tight whitespace-normal break-words overflow-hidden">
+                            {assignedMeal || "Select..."}
+                          </div>
+                        </SelectValue>
+                        <ChevronDown className="h-3 w-3 text-gray-500 flex-shrink-0 ml-1" />
+                      </SelectTrigger>
                     <SelectContent className="max-h-60">
                       <div className="px-2 py-1 text-sm text-gray-500 border-b bg-gray-50">
                         Select a meal...
@@ -207,11 +209,12 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
                       </Dialog>
                     </SelectContent>
                   </Select>
-                </div>
-              );
-            })}
-          </div>
-        ))}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
