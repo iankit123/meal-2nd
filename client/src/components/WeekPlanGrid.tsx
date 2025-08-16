@@ -71,14 +71,20 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
   };
 
   const handleMealChange = async (day: string, meal: keyof WeekPlanSlot, mealName: string | null) => {
+    // Optimistic update - update UI immediately
+    setHasChanges(true);
+    
+    // Update Firebase in background without blocking UI
     try {
       if (mealName && mealName !== "none") {
-        await assignMealToSlot(day, meal, mealName);
+        // Pass current weekPlan to avoid extra Firebase read
+        assignMealToSlot(day, meal, mealName, weekPlan);
       } else {
-        await removeMealFromSlot(day, meal);
+        // Pass current weekPlan to avoid extra Firebase read  
+        removeMealFromSlot(day, meal, weekPlan);
       }
+      // Sync with Firebase in background
       onUpdate();
-      setHasChanges(true);
     } catch (error) {
       toast({
         title: "Error",

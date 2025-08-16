@@ -55,10 +55,13 @@ export const updateWeekPlan = async (slots: WeekPlan['slots']): Promise<void> =>
 export const assignMealToSlot = async (
   day: string,
   mealTime: keyof WeekPlanSlot,
-  recipeId: string
+  recipeId: string,
+  currentPlan?: WeekPlan | null
 ): Promise<void> => {
-  const currentPlan = await getWeekPlan();
-  if (!currentPlan) return;
+  if (!currentPlan) {
+    currentPlan = await getWeekPlan();
+    if (!currentPlan) return;
+  }
 
   const updatedSlots = {
     ...currentPlan.slots,
@@ -73,10 +76,13 @@ export const assignMealToSlot = async (
 
 export const removeMealFromSlot = async (
   day: string,
-  mealTime: keyof WeekPlanSlot
+  mealTime: keyof WeekPlanSlot,
+  currentPlan?: WeekPlan | null
 ): Promise<void> => {
-  const currentPlan = await getWeekPlan();
-  if (!currentPlan) return;
+  if (!currentPlan) {
+    currentPlan = await getWeekPlan();
+    if (!currentPlan) return;
+  }
 
   const updatedSlots = {
     ...currentPlan.slots,
