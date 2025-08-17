@@ -3,7 +3,7 @@
 
 export const COLORS = {
   // Primary color - change this to update the entire app's theme
-  PRIMARY_COLOR: 'orange', // Options: 'pink', 'purple', 'blue', 'green', 'orange', 'indigo'
+  PRIMARY_COLOR: 'purple', // Options: 'pink', 'purple', 'blue', 'green', 'orange', 'indigo'
   
   // Color mappings based on primary color
   getColors: () => {

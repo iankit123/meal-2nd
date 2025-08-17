@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "./context/AuthContext";
+import { useTheme } from "./hooks/useTheme";
 
 import Header from "./components/Header";
 import AllMeals from "./pages/AllMeals";
@@ -15,6 +16,9 @@ import WeekPlan from "./pages/WeekPlan";
 import NotFound from "./pages/not-found";
 
 function Router() {
+  // Apply theme colors dynamically from colors.ts
+  useTheme();
+  
   return (
     <div className="min-h-screen bg-background">
       <Header />
