@@ -15,36 +15,16 @@ export const getWeekPlan = async (): Promise<WeekPlan | null> => {
   }
 
   const username = getCurrentUsername();
+  const docRef = doc(db, WEEK_PLANS_COLLECTION, username);
+  const docSnap = await getDoc(docRef);
   
-  try {
-    // Try Firebase first
-    const docRef = doc(db, WEEK_PLANS_COLLECTION, username);
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      return {
-        uid: docSnap.id,
-        ...data,
-        updatedAt: data.updatedAt?.toDate() || new Date(),
-      } as WeekPlan;
-    }
-  } catch (error) {
-    console.warn('Firebase unavailable, using localStorage fallback:', error);
-    // Fall back to localStorage
-    const localKey = `weekPlan-${username}`;
-    const stored = localStorage.getItem(localKey);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        return {
-          ...parsed,
-          updatedAt: new Date(parsed.updatedAt),
-        };
-      } catch (e) {
-        console.warn('Failed to parse stored week plan');
-      }
-    }
+  if (docSnap.exists()) {
+    const data = docSnap.data();
+    return {
+      uid: docSnap.id,
+      ...data,
+      updatedAt: data.updatedAt?.toDate() || new Date(),
+    } as WeekPlan;
   }
   
   // Return empty week plan if doesn't exist
@@ -72,19 +52,11 @@ export const updateWeekPlan = async (slots: WeekPlan['slots']): Promise<void> =>
   const weekPlanData = {
     uid: username,
     slots,
-    updatedAt: new Date(),
+    updatedAt: serverTimestamp(),
   };
 
-  try {
-    // Try Firebase first
-    const docRef = doc(db, WEEK_PLANS_COLLECTION, username);
-    await setDoc(docRef, { ...weekPlanData, updatedAt: serverTimestamp() }, { merge: true });
-  } catch (error) {
-    console.warn('Firebase unavailable, using localStorage fallback:', error);
-    // Fall back to localStorage
-    const localKey = `weekPlan-${username}`;
-    localStorage.setItem(localKey, JSON.stringify(weekPlanData));
-  }
+  const docRef = doc(db, WEEK_PLANS_COLLECTION, username);
+  await setDoc(docRef, weekPlanData, { merge: true });
 };
 
 export const assignMealToSlot = async (

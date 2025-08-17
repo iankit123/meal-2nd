@@ -3,6 +3,7 @@ import { User, onAuthStateChanged } from "firebase/auth";
 import { auth, initializeAuth } from "../lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AuthContextType {
   user: User | null;
@@ -47,6 +48,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const initAuth = async () => {
@@ -148,6 +150,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUsername(newUsername);
       setIsAuthenticated(true);
       localStorage.setItem('mealplanner-username', newUsername);
+      
+      // Clear React Query cache when user changes
+      queryClient.clear();
     } catch (error: any) {
       console.error('Failed to create user:', error);
       throw error;
@@ -204,6 +209,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUsername(existingUsername);
       setIsAuthenticated(true);
       localStorage.setItem('mealplanner-username', existingUsername);
+      
+      // Clear React Query cache when user changes
+      queryClient.clear();
     } catch (error: any) {
       console.error('Failed to login user:', error);
       throw error;
@@ -223,6 +231,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUsername(null);
     setIsAuthenticated(false);
     localStorage.removeItem('mealplanner-username');
+    
+    // Clear React Query cache on logout
+    queryClient.clear();
     console.log('User logged out');
   };
 

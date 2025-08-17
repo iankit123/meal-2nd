@@ -7,18 +7,22 @@ import WeekPlanGrid from "../components/WeekPlanGrid";
 import EmptyState from "../components/EmptyState";
 import { getWeekPlan } from "../lib/weekPlan";
 import { getAllRecipes } from "../lib/recipes";
+import { useAuth } from "../context/AuthContext";
 
 export default function WeekPlan() {
   const [, setLocation] = useLocation();
+  const { username } = useAuth();
 
   const { data: weekPlan, isLoading: weekPlanLoading, refetch: refetchWeekPlan } = useQuery({
-    queryKey: ['/api/week-plan'],
+    queryKey: ['/api/week-plan', username],
     queryFn: getWeekPlan,
+    enabled: !!username,
   });
 
   const { data: recipes = [] } = useQuery({
-    queryKey: ['/api/recipes'],
+    queryKey: ['/api/recipes', username],
     queryFn: getAllRecipes,
+    enabled: !!username,
   });
 
   if (weekPlanLoading) {
