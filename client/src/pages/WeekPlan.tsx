@@ -34,17 +34,6 @@ export default function WeekPlan() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      {/* Back Button - only show on mobile */}
-      <Button
-        onClick={() => setLocation("/")}
-        variant="outline"
-        size="sm"
-        className="mb-4 md:hidden"
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Back
-      </Button>
-
       {hasRecipes ? (
         weekPlan && (
           <WeekPlanGrid

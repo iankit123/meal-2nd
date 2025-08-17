@@ -63,7 +63,7 @@ export default function Header() {
             <img 
               src={catMascotImage} 
               alt="Cute cat mascot" 
-              className="w-8 h-8 rounded-xl shadow-md transform rotate-12"
+              className={`rounded-xl shadow-md transform rotate-12 ${location === "/" ? "w-12 h-12" : "w-8 h-8"}`}
             />
           </Link>
           
