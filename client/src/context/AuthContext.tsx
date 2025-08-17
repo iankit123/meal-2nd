@@ -107,6 +107,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         if (!response.ok) {
           const errorData = await response.json();
+          console.error('Server API Error:', errorData);
           throw new Error(errorData.error || 'Failed to create username');
         }
 
