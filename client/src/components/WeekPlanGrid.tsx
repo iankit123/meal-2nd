@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ChevronDown, Check, Plus } from "lucide-react";
 import { WeekPlan, WeekPlanSlot } from "../types/recipe";
-import { assignMealToSlot, removeMealFromSlot } from "../lib/weekPlan";
+import { saveWeekPlanData } from "../lib/storage";
 import { useToast } from "@/hooks/use-toast";
 
 interface WeekPlanGridProps {
@@ -94,21 +94,32 @@ export default function WeekPlanGrid({
     meal: keyof WeekPlanSlot,
     mealName: string | null,
   ) => {
-    // Optimistic update - update UI immediately
-    setHasChanges(true);
-
-    // Update Firebase in background without blocking UI
     try {
+      console.log(`Updating ${day} ${meal} to:`, mealName);
+      
+      // Create updated slots immediately
+      const updatedSlots = {
+        ...weekPlan.slots,
+        [day]: {
+          ...weekPlan.slots[day],
+        },
+      };
+
       if (mealName && mealName !== "none") {
-        // Pass current weekPlan to avoid extra Firebase read
-        assignMealToSlot(day, meal, mealName, weekPlan);
+        updatedSlots[day][meal] = mealName;
       } else {
-        // Pass current weekPlan to avoid extra Firebase read
-        removeMealFromSlot(day, meal, weekPlan);
+        delete updatedSlots[day][meal];
       }
-      // Sync with Firebase in background
+
+      // Save to server directly
+      await saveWeekPlanData(updatedSlots);
+      
+      // Trigger refetch to get latest data
       onUpdate();
+      
+      console.log(`Successfully updated ${day} ${meal}`);
     } catch (error) {
+      console.error("Failed to update meal:", error);
       toast({
         title: "Error",
         description: "Failed to update meal plan",
