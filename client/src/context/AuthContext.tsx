@@ -93,17 +93,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         throw new Error('Failed to initialize authentication');
       }
 
-      // For development/demo purposes, use localStorage to check username uniqueness
-      const existingUsernames = JSON.parse(localStorage.getItem('mealplanner-usernames') || '[]');
-      if (existingUsernames.includes(newUsername)) {
-        throw new Error('Username already exists');
-      }
-
-      // Store username locally for demo
-      existingUsernames.push(newUsername);
-      localStorage.setItem('mealplanner-usernames', JSON.stringify(existingUsernames));
-
-      // Try Firebase first, but fall back to local storage if it fails
+      // Try Firebase first for username checking
       try {
         // Check if username already exists in Firebase
         const usernameDoc = await getDoc(doc(db, 'usernames', newUsername));
@@ -111,19 +101,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           throw new Error('Username already exists');
         }
 
-        // Create username document
+        // Create username document in Firebase
         await setDoc(doc(db, 'usernames', newUsername), {
           userId: authUser.uid,
           createdAt: new Date(),
         });
 
-        // Create user profile
+        // Create user profile in Firebase
         await setDoc(doc(db, 'users', authUser.uid), {
           username: newUsername,
           createdAt: new Date(),
         });
-      } catch (firebaseError) {
+
+        console.log('Username stored in Firebase successfully');
+      } catch (firebaseError: any) {
         console.warn('Firebase not available, using local storage:', firebaseError);
+        
+        // Fall back to localStorage for demo purposes
+        const existingUsernames = JSON.parse(localStorage.getItem('mealplanner-usernames') || '[]');
+        if (existingUsernames.includes(newUsername)) {
+          throw new Error('Username already exists');
+        }
+
+        // Store username locally for demo
+        existingUsernames.push(newUsername);
+        localStorage.setItem('mealplanner-usernames', JSON.stringify(existingUsernames));
       }
 
       setUsername(newUsername);
@@ -147,26 +149,28 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         throw new Error('Failed to initialize authentication');
       }
 
-      // Check localStorage first for demo purposes
-      const existingUsernames = JSON.parse(localStorage.getItem('mealplanner-usernames') || '[]');
-      if (!existingUsernames.includes(existingUsername)) {
-        // Try Firebase as fallback
-        try {
-          const usernameDoc = await getDoc(doc(db, 'usernames', existingUsername));
-          if (!usernameDoc.exists()) {
-            throw new Error('Username not found');
-          }
-          
-          const userData = usernameDoc.data();
-          
-          // Update current user to match the username's user ID
-          await setDoc(doc(db, 'users', authUser.uid), {
-            username: existingUsername,
-            originalUserId: userData.userId,
-            loginAt: new Date(),
-          });
-        } catch (firebaseError) {
-          // If not in localStorage and Firebase fails, username doesn't exist
+      // Try Firebase first
+      try {
+        const usernameDoc = await getDoc(doc(db, 'usernames', existingUsername));
+        if (!usernameDoc.exists()) {
+          throw new Error('Username not found');
+        }
+        
+        const userData = usernameDoc.data();
+        console.log('Username found in Firebase:', existingUsername);
+        
+        // Update current user to match the username's user ID
+        await setDoc(doc(db, 'users', authUser.uid), {
+          username: existingUsername,
+          originalUserId: userData.userId,
+          loginAt: new Date(),
+        });
+      } catch (firebaseError: any) {
+        console.warn('Firebase not available, checking local storage:', firebaseError);
+        
+        // Fall back to localStorage for demo purposes
+        const existingUsernames = JSON.parse(localStorage.getItem('mealplanner-usernames') || '[]');
+        if (!existingUsernames.includes(existingUsername)) {
           throw new Error('Username not found');
         }
       }
