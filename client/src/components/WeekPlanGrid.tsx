@@ -190,7 +190,7 @@ export default function WeekPlanGrid({
                       }}
                     >
                       <SelectTrigger
-                        className="w-full h-full rounded-2xl text-xs font-medium px-3 py-2 bg-white border-2 hover:shadow-md transition-shadow relative"
+                        className="w-full h-full rounded-2xl text-xs font-medium px-3 py-2 bg-white border-2 hover:shadow-md transition-shadow relative [&>svg]:hidden"
                         style={{
                           border: "2px solid var(--theme-200)",
                           color: "var(--theme-900)",
