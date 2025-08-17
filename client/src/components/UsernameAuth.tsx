@@ -53,8 +53,9 @@ export default function UsernameAuth() {
       setSuccess(`Welcome ${username}! Your account has been created.`);
       // Auto-login will happen in the auth context
     } catch (err: any) {
-      if (err.message?.includes("already exists")) {
-        setError("Username already taken. Please choose a different one.");
+      console.log("Create user error:", err);
+      if (err.message?.includes("already exists") || err.message?.includes("Username already exists")) {
+        setError("Username already exists. Please choose a different one.");
       } else {
         setError("Failed to create account. Please try again.");
       }
