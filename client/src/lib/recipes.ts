@@ -151,15 +151,21 @@ export const deleteRecipe = async (id: string): Promise<void> => {
 };
 
 export const getAllRecipes = async (): Promise<Recipe[]> => {
-  const q = query(collection(db, RECIPES_COLLECTION), orderBy("createdAt", "desc"));
-  const querySnapshot = await getDocs(q);
-  
-  return querySnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-    createdAt: doc.data().createdAt?.toDate() || new Date(),
-    updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-  })) as Recipe[];
+  try {
+    const q = query(collection(db, RECIPES_COLLECTION), orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate() || new Date(),
+      updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+    })) as Recipe[];
+  } catch (error) {
+    console.warn('Firebase unavailable for recipes, returning empty array:', error);
+    // Return empty array to allow week plan functionality to work
+    return [];
+  }
 };
 
 export const getRecipeById = async (id: string): Promise<Recipe | null> => {
