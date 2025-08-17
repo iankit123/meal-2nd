@@ -18,7 +18,7 @@ function Router() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="max-w-md mx-auto px-4 pb-8">
+      <main className="max-w-md mx-auto px-4 pb-8 mt-[6px] mb-[6px]">
         <Switch>
           <Route path="/" component={AllMeals} />
           <Route path="/bookmarks" component={Bookmarks} />

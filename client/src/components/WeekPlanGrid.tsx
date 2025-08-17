@@ -201,7 +201,7 @@ export default function WeekPlanGrid({
                       >
                         <SelectValue asChild>
                           <div
-                            className="text-center leading-tight break-words overflow-hidden w-full flex items-center justify-center pr-6"
+                            className="text-left leading-tight break-words overflow-hidden w-full flex items-center justify-start pr-6"
                             style={{
                               wordWrap: "break-word",
                               overflowWrap: "break-word",
