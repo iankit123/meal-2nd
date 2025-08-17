@@ -41,16 +41,16 @@
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
   --radius: 1.25rem;
-  --theme-50: hsl(210, 50%, 97%);
-  --theme-100: hsl(210, 45%, 92%);
-  --theme-200: hsl(210, 40%, 85%);
-  --theme-300: hsl(210, 48%, 84%);
-  --theme-400: hsl(210, 50%, 75%);
-  --theme-500: hsl(210, 55%, 65%);
-  --theme-600: hsl(210, 60%, 55%);
-  --theme-700: hsl(210, 65%, 45%);
-  --theme-800: hsl(210, 70%, 35%);
-  --theme-900: hsl(210, 75%, 25%);
+  --theme-50: hsl(30, 50%, 97%);
+  --theme-100: hsl(30, 45%, 92%);
+  --theme-200: hsl(30, 40%, 85%);
+  --theme-300: hsl(30, 48%, 84%);
+  --theme-400: hsl(30, 50%, 75%);
+  --theme-500: hsl(30, 55%, 65%);
+  --theme-600: hsl(30, 60%, 55%);
+  --theme-700: hsl(30, 65%, 45%);
+  --theme-800: hsl(30, 70%, 35%);
+  --theme-900: hsl(30, 75%, 25%);
 }
 
 .dark {
