@@ -28,8 +28,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(400).json({ error: 'Username is required' });
     }
     
-    if (username.length < 3 || username.length > 20) {
-      return res.status(400).json({ error: 'Username must be 3-20 characters' });
+    if (username.length < 3 || username.length > 50) {
+      return res.status(400).json({ error: 'Username must be 3-50 characters' });
     }
     
     if (!/^[a-zA-Z0-9]+$/.test(username)) {

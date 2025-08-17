@@ -25,7 +25,7 @@ export const runUsernameTests = async (): Promise<TestResults> => {
     console.log('✅ Auth initialized, User ID:', auth.currentUser.uid);
     
     // Test 1: Server API username storage
-    const testUsername = `servertest${Date.now()}`;
+    const testUsername = `srv${Date.now().toString().slice(-6)}`;
     console.log('🔄 Testing server API username creation:', testUsername);
     
     try {
@@ -62,8 +62,8 @@ export const runUsernameTests = async (): Promise<TestResults> => {
     
     console.log('Test 1 result:', serverTest ? '✅ PASSED' : '❌ FAILED');
     
-    // Test 2: Firebase username storage
-    const firebaseTestUsername = `firebasetest${Date.now()}`;
+    // Test 2: Firebase username storage  
+    const firebaseTestUsername = `fb${Date.now().toString().slice(-6)}`;
     console.log('🔄 Testing Firebase username creation:', firebaseTestUsername);
     
     try {

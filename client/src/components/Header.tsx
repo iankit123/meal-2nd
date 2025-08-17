@@ -3,6 +3,7 @@ import { Utensils, Calendar, Bookmark, Star, LogOut, TestTube } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../context/AuthContext";
 import { runUsernameTests } from "../utils/testUsername";
+import { quickSystemTest } from "../utils/quickTest";
 import catMascotImage from "@assets/generated_images/Cute_cat_food_mascot_23ee73be.png";
 
 export default function Header() {
@@ -10,14 +11,21 @@ export default function Header() {
   const { username, logout } = useAuth();
 
   const handleRunTests = async () => {
-    console.log('🧪 Running Username System Tests...');
+    console.log('🧪 Running Quick System Test...');
     try {
-      const results = await runUsernameTests();
-      console.log('📊 Test Results:', results);
-      console.log('Server Test:', results.serverTest ? '✅ PASS' : '❌ FAIL');
-      console.log('Firebase Test:', results.firebaseTest ? '✅ PASS' : '❌ FAIL');
-      console.log('LocalStorage Test:', results.localStorageTest ? '✅ PASS' : '❌ FAIL');
-      alert(`Test Results:\nServer Test: ${results.serverTest ? 'PASS' : 'FAIL'}\nFirebase Test: ${results.firebaseTest ? 'PASS' : 'FAIL'}\nLocalStorage Test: ${results.localStorageTest ? 'PASS' : 'FAIL'}\n\nCheck console for detailed logs.`);
+      // First run a quick test
+      const quickResult = await quickSystemTest();
+      if (quickResult.server) {
+        console.log('✅ Quick test passed, running full tests...');
+        const results = await runUsernameTests();
+        console.log('📊 Test Results:', results);
+        console.log('Server Test:', results.serverTest ? '✅ PASS' : '❌ FAIL');
+        console.log('Firebase Test:', results.firebaseTest ? '✅ PASS' : '❌ FAIL');
+        console.log('LocalStorage Test:', results.localStorageTest ? '✅ PASS' : '❌ FAIL');
+        alert(`Test Results:\nServer Test: ${results.serverTest ? 'PASS' : 'FAIL'}\nFirebase Test: ${results.firebaseTest ? 'PASS' : 'FAIL'}\nLocalStorage Test: ${results.localStorageTest ? 'PASS' : 'FAIL'}\n\nCheck console for detailed logs.`);
+      } else {
+        alert(`Quick Test Failed: ${quickResult.message}\n\nCheck console for detailed logs.`);
+      }
     } catch (error) {
       console.error('❌ Test execution failed:', error);
       alert('Test execution failed. Check console for details.');
