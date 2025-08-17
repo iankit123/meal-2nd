@@ -31,10 +31,12 @@ export default function UsernameAuth() {
       const results = await runUsernameTests();
       setTestResults(results);
       
-      if (results.firebaseTest && results.localStorageTest) {
-        setSuccess("All tests passed! Username system is working correctly.");
+      if (results.serverTest) {
+        setSuccess("✅ Server API working! Cross-browser username access enabled.");
+      } else if (results.localStorageTest) {
+        setError("Server unavailable, using local storage (browser-specific usernames)");
       } else {
-        setError(`Tests failed: Firebase: ${results.firebaseTest ? 'PASS' : 'FAIL'}, LocalStorage: ${results.localStorageTest ? 'PASS' : 'FAIL'}`);
+        setError("All storage systems failed. Please check your connection.");
       }
     } catch (err: any) {
       setError("Test execution failed: " + err.message);
@@ -49,8 +51,8 @@ export default function UsernameAuth() {
     if (username.length < 3) {
       return "Username must be at least 3 characters";
     }
-    if (username.length > 20) {
-      return "Username must be less than 20 characters";
+    if (username.length > 50) {
+      return "Username must be less than 50 characters";
     }
     if (!alphanumeric.test(username)) {
       return "Username can only contain letters and numbers";
@@ -225,7 +227,7 @@ export default function UsernameAuth() {
                 className="text-xs text-center mt-2"
                 style={{ color: "var(--theme-600)" }}
               >
-                Username must be 3-20 characters, letters and numbers only
+                Username must be 3-50 characters, letters and numbers only
               </p>
             </TabsContent>
 
@@ -265,8 +267,14 @@ export default function UsernameAuth() {
             {testResults && (
               <div className="mt-2 p-3 bg-gray-50 rounded-lg text-sm">
                 <div className="font-medium mb-1">Test Results:</div>
+                <div>Server Test: {testResults.serverTest ? '✅ PASS' : '❌ FAIL'}</div>
                 <div>Firebase Test: {testResults.firebaseTest ? '✅ PASS' : '❌ FAIL'}</div>
                 <div>LocalStorage Test: {testResults.localStorageTest ? '✅ PASS' : '❌ FAIL'}</div>
+                {testResults.serverTest && (
+                  <div className="text-green-600 font-medium mt-1">
+                    ✅ Cross-browser username access working
+                  </div>
+                )}
               </div>
             )}
           </div>
