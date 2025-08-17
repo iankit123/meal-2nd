@@ -4,12 +4,18 @@ import { WeekPlan, WeekPlanSlot } from "../types/recipe";
 
 const WEEK_PLANS_COLLECTION = "weekPlans";
 
+// Get current username from localStorage for data isolation
+const getCurrentUsername = (): string => {
+  return localStorage.getItem('mealplanner-username') || 'anonymous';
+};
+
 export const getWeekPlan = async (): Promise<WeekPlan | null> => {
   if (!auth.currentUser) {
     throw new Error("User must be authenticated");
   }
 
-  const docRef = doc(db, WEEK_PLANS_COLLECTION, auth.currentUser.uid);
+  const username = getCurrentUsername();
+  const docRef = doc(db, WEEK_PLANS_COLLECTION, username);
   const docSnap = await getDoc(docRef);
   
   if (docSnap.exists()) {
@@ -23,7 +29,7 @@ export const getWeekPlan = async (): Promise<WeekPlan | null> => {
   
   // Return empty week plan if doesn't exist
   return {
-    uid: auth.currentUser.uid,
+    uid: username,
     slots: {
       monday: {},
       tuesday: {},
@@ -42,13 +48,14 @@ export const updateWeekPlan = async (slots: WeekPlan['slots']): Promise<void> =>
     throw new Error("User must be authenticated");
   }
 
+  const username = getCurrentUsername();
   const weekPlanData = {
-    uid: auth.currentUser.uid,
+    uid: username,
     slots,
     updatedAt: serverTimestamp(),
   };
 
-  const docRef = doc(db, WEEK_PLANS_COLLECTION, auth.currentUser.uid);
+  const docRef = doc(db, WEEK_PLANS_COLLECTION, username);
   await setDoc(docRef, weekPlanData, { merge: true });
 };
 

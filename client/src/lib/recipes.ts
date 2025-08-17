@@ -19,6 +19,11 @@ import { v4 as uuidv4 } from "uuid";
 
 const RECIPES_COLLECTION = "recipes";
 
+// Get current username from localStorage for data isolation
+const getCurrentUsername = (): string => {
+  return localStorage.getItem('mealplanner-username') || 'anonymous';
+};
+
 export interface RecipeFormData {
   title: string;
   instructions: string;
@@ -39,7 +44,8 @@ export const createRecipe = async (formData: RecipeFormData): Promise<string> =>
   // Upload image if provided
   if (formData.image) {
     const imageId = uuidv4();
-    imagePath = `recipes/${auth.currentUser.uid}/${imageId}_${formData.image.name}`;
+    const username = getCurrentUsername();
+    imagePath = `recipes/${username}/${imageId}_${formData.image.name}`;
     const imageRef = ref(storage, imagePath);
     
     const snapshot = await uploadBytes(imageRef, formData.image);
@@ -56,7 +62,7 @@ export const createRecipe = async (formData: RecipeFormData): Promise<string> =>
     imagePath,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-    createdBy: auth.currentUser.uid,
+    createdBy: getCurrentUsername(),
     bookmarkedBy: [],
   };
 
@@ -86,7 +92,8 @@ export const updateRecipe = async (id: string, formData: RecipeFormData, existin
 
     // Upload new image
     const imageId = uuidv4();
-    imagePath = `recipes/${auth.currentUser.uid}/${imageId}_${formData.image.name}`;
+    const username = getCurrentUsername();
+    imagePath = `recipes/${username}/${imageId}_${formData.image.name}`;
     const imageRef = ref(storage, imagePath);
     
     const snapshot = await uploadBytes(imageRef, formData.image);
@@ -125,7 +132,7 @@ export const deleteRecipe = async (id: string): Promise<void> => {
   }
 
   const recipe = recipeSnap.data();
-  if (recipe.createdBy !== auth.currentUser.uid) {
+  if (recipe.createdBy !== getCurrentUsername()) {
     throw new Error("Not authorized to delete this recipe");
   }
 
@@ -179,15 +186,17 @@ export const toggleBookmark = async (recipeId: string, isCurrentlyBookmarked?: b
 
   const recipeRef = doc(db, RECIPES_COLLECTION, recipeId);
   
+  const username = getCurrentUsername();
+  
   // If we know the current state, skip the read operation
   if (isCurrentlyBookmarked !== undefined) {
     if (isCurrentlyBookmarked) {
       await updateDoc(recipeRef, {
-        bookmarkedBy: arrayRemove(auth.currentUser.uid),
+        bookmarkedBy: arrayRemove(username),
       });
     } else {
       await updateDoc(recipeRef, {
-        bookmarkedBy: arrayUnion(auth.currentUser.uid),
+        bookmarkedBy: arrayUnion(username),
       });
     }
     return;
@@ -202,15 +211,16 @@ export const toggleBookmark = async (recipeId: string, isCurrentlyBookmarked?: b
 
   const recipe = recipeSnap.data();
   const bookmarkedBy = recipe.bookmarkedBy || [];
-  const isBookmarked = bookmarkedBy.includes(auth.currentUser.uid);
+  const currentUsername = getCurrentUsername();
+  const isBookmarked = bookmarkedBy.includes(currentUsername);
 
   if (isBookmarked) {
     await updateDoc(recipeRef, {
-      bookmarkedBy: arrayRemove(auth.currentUser.uid),
+      bookmarkedBy: arrayRemove(currentUsername),
     });
   } else {
     await updateDoc(recipeRef, {
-      bookmarkedBy: arrayUnion(auth.currentUser.uid),
+      bookmarkedBy: arrayUnion(currentUsername),
     });
   }
 };
@@ -220,9 +230,10 @@ export const getBookmarkedRecipes = async (): Promise<Recipe[]> => {
     return [];
   }
 
+  const username = getCurrentUsername();
   const allRecipes = await getAllRecipes();
   return allRecipes.filter(recipe => 
-    recipe.bookmarkedBy.includes(auth.currentUser!.uid)
+    recipe.bookmarkedBy && recipe.bookmarkedBy.includes(username)
   );
 };
 
