@@ -28,12 +28,26 @@ const getCurrentUsername = (): string => {
 export const getWeekPlanData = async (): Promise<WeekPlanData | null> => {
   const username = getCurrentUsername();
   
+  // Try server API first (more reliable)
+  try {
+    const response = await fetch(`/api/weekplan/${username}`);
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Week plan data retrieved from server:', data);
+      return data;
+    }
+  } catch (serverError) {
+    console.warn('Server API unavailable for week plan retrieval:', serverError);
+  }
+
+  // Fallback to Firebase
   try {
     const docRef = doc(db, 'weekPlans', username);
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
       const data = docSnap.data();
+      console.log('Week plan data retrieved from Firebase:', data);
       return {
         uid: docSnap.id,
         ...data,
@@ -42,19 +56,10 @@ export const getWeekPlanData = async (): Promise<WeekPlanData | null> => {
     }
   } catch (error) {
     console.warn('Firebase unavailable for week plan retrieval:', error);
-    // Try server API as fallback
-    try {
-      const response = await fetch(`/api/weekplan/${username}`);
-      if (response.ok) {
-        return await response.json();
-      }
-    } catch (serverError) {
-      console.warn('Server API also unavailable:', serverError);
-    }
   }
   
-  // Return empty week plan
-  return {
+  // Return empty week plan structure
+  const emptyPlan = {
     uid: username,
     slots: {
       monday: {},
@@ -67,6 +72,9 @@ export const getWeekPlanData = async (): Promise<WeekPlanData | null> => {
     },
     updatedAt: new Date(),
   };
+  
+  console.log('Returning empty week plan for username:', username);
+  return emptyPlan;
 };
 
 export const saveWeekPlanData = async (slots: any): Promise<void> => {
