@@ -1,0 +1,40 @@
+[vite] connecting...
+[vite] connected.
+Firebase Auth working! User ID: GAoc8a5O4xNvoxzLEi3THe6uM2k2
+Firebase not available, using local storage: 
+_FirebaseError {code: "permission-denied", customData: undefined, name: "FirebaseError", toString: ƒ}
+Warning: Each child in a list should have a unique &quot;key&quot; prop.
+
+Check the render method of `WeekPlanGrid`. See https://reactjs.org/link/warning-keys for more information.
+    at WeekPlanGrid (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/src/components/WeekPlanGrid.tsx:39:3)
+    at div
+    at WeekPlan (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/src/pages/WeekPlan.tsx:27:27)
+    at Route (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=c7a834f8:323:16)
+    at Switch (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=c7a834f8:379:17)
+    at main
+    at div
+    at Router (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/src/App.tsx?v=fQ0-k8jUjl0igeDtWepP5:36:3)
+    at Provider (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-O46BVKQA.js?v=c7a834f8:48:15)
+    at TooltipProvider (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=c7a834f8:59:5)
+    at AuthProvider (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/src/context/AuthContext.tsx:44:32)
+    at QueryClientProvider (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=c7a834f8:2805:3)
+    at App
+
+Check the render method of &#x60;WeekPlanGrid&#x60;. See https://reactjs.org/link/warning-keys for more information.
+at WeekPlanGrid (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/src/components/WeekPlanGrid.tsx:39:3)
+at div
+at WeekPlan (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/src/pages/WeekPlan.tsx:27:27)
+at Route (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=c7a834f8:323:16)
+at Switch (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=c7a834f8:379:17)
+at main
+at div
+at Router (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/src/App.tsx?v=fQ0-k8jUjl0igeDtWepP5:36:3)
+at Provider (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-O46BVKQA.js?v=c7a834f8:48:15)
+at TooltipProvider (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=c7a834f8:59:5)
+at AuthProvider (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/src/context/AuthContext.tsx:44:32)
+at QueryClientProvider (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=c7a834f8:2805:3)
+at App
+at t.value (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://28013e63-05df-434c-bf61-3254bc417215-00-29zkqbez64aom.riker.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400

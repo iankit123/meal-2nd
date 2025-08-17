@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -164,9 +164,9 @@ export default function WeekPlanGrid({
 
           {/* All Grid Cells */}
           {days.map((day) => (
-            <>
+            <React.Fragment key={day.key}>
               {/* Day Label */}
-              <div key={`${day.key}-label`} className="week-plan-day">
+              <div className="week-plan-day">
                 {day.label}
               </div>
 
@@ -349,7 +349,7 @@ export default function WeekPlanGrid({
                   </div>
                 );
               })}
-            </>
+            </React.Fragment>
           ))}
         </div>
       </div>
