@@ -151,15 +151,34 @@ export const deleteRecipe = async (id: string): Promise<void> => {
 };
 
 export const getAllRecipes = async (): Promise<Recipe[]> => {
-  const q = query(collection(db, RECIPES_COLLECTION), orderBy("createdAt", "desc"));
-  const querySnapshot = await getDocs(q);
-  
-  return querySnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data(),
-    createdAt: doc.data().createdAt?.toDate() || new Date(),
-    updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-  })) as Recipe[];
+  try {
+    const q = query(collection(db, RECIPES_COLLECTION), orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate() || new Date(),
+      updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+    })) as Recipe[];
+  } catch (error) {
+    console.warn('Firebase unavailable, using localStorage fallback for recipes:', error);
+    // Fall back to localStorage
+    const stored = localStorage.getItem('mealplanner-recipes');
+    if (stored) {
+      try {
+        const recipes = JSON.parse(stored);
+        return recipes.map((recipe: any) => ({
+          ...recipe,
+          createdAt: new Date(recipe.createdAt),
+          updatedAt: new Date(recipe.updatedAt),
+        }));
+      } catch (e) {
+        console.warn('Failed to parse stored recipes');
+      }
+    }
+    return [];
+  }
 };
 
 export const getRecipeById = async (id: string): Promise<Recipe | null> => {
