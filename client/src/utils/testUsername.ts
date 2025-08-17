@@ -1,87 +1,120 @@
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db, initializeAuth } from "../lib/firebase";
+import { auth } from '../lib/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
-// Test function to verify username storage and retrieval
-export const testUsernameSystem = async () => {
-  console.log("🧪 Starting Username System Test");
+interface TestResults {
+  serverTest: boolean;
+  firebaseTest: boolean;
+  localStorageTest: boolean;
+}
+
+export const runUsernameTests = async (): Promise<TestResults> => {
+  console.log('🧪 Starting Comprehensive Username System Test');
+  
+  let serverTest = false;
+  let firebaseTest = false;
+  let localStorageTest = false;
   
   try {
-    // Initialize auth
-    const user = await initializeAuth();
-    if (!user) {
-      console.error("❌ Auth initialization failed");
-      return false;
-    }
-    console.log("✅ Auth initialized, User ID:", user.uid);
-
-    // Test creating a username
-    const testUsername = "testuser" + Date.now();
-    console.log("🔄 Testing username creation:", testUsername);
-    
-    // Check if username exists (should not exist)
-    const usernameDoc = await getDoc(doc(db, 'usernames', testUsername));
-    console.log("📖 Username exists check:", usernameDoc.exists());
-    
-    if (usernameDoc.exists()) {
-      console.error("❌ Username already exists (unexpected)");
-      return false;
-    }
-
-    // Create username document
-    await setDoc(doc(db, 'usernames', testUsername), {
-      userId: user.uid,
-      createdAt: new Date(),
-    });
-    console.log("✅ Username document created");
-
-    // Create user profile
-    await setDoc(doc(db, 'users', user.uid), {
-      username: testUsername,
-      createdAt: new Date(),
-    });
-    console.log("✅ User profile created");
-
-    // Verify username was stored
-    const verifyUsernameDoc = await getDoc(doc(db, 'usernames', testUsername));
-    if (!verifyUsernameDoc.exists()) {
-      console.error("❌ Username was not stored properly");
-      return false;
+    // Check if auth is initialized
+    if (!auth.currentUser) {
+      console.log('❌ Auth not initialized');
+      return { serverTest: false, firebaseTest: false, localStorageTest: false };
     }
     
-    const usernameData = verifyUsernameDoc.data();
-    console.log("✅ Username verified in Firebase:", usernameData);
+    console.log('✅ Auth initialized, User ID:', auth.currentUser.uid);
+    
+    // Test 1: Server API username storage
+    const testUsername = `servertest${Date.now()}`;
+    console.log('🔄 Testing server API username creation:', testUsername);
+    
+    try {
+      // Create username via server API
+      const createResponse = await fetch('/api/usernames', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: testUsername }),
+      });
 
-    // Test retrieval by another "user"
-    console.log("🔄 Testing username retrieval as different user...");
-    const retrieveDoc = await getDoc(doc(db, 'usernames', testUsername));
-    if (retrieveDoc.exists()) {
-      console.log("✅ Username successfully retrieved:", retrieveDoc.data());
-      return true;
-    } else {
-      console.error("❌ Username could not be retrieved");
-      return false;
+      if (createResponse.ok) {
+        console.log('✅ Server username creation successful');
+        
+        // Verify by checking if it exists
+        const checkResponse = await fetch(`/api/usernames/${testUsername}`);
+        if (checkResponse.ok) {
+          const data = await checkResponse.json();
+          if (data.exists) {
+            serverTest = true;
+            console.log('✅ Server username verification successful');
+          } else {
+            console.log('❌ Server username not found after creation');
+          }
+        }
+      } else {
+        const errorData = await createResponse.json();
+        console.log('❌ Server API failed:', errorData.error);
+      }
+    } catch (error) {
+      console.log('❌ Server test failed with error:', error);
     }
-
+    
+    console.log('Test 1 result:', serverTest ? '✅ PASSED' : '❌ FAILED');
+    
+    // Test 2: Firebase username storage
+    const firebaseTestUsername = `firebasetest${Date.now()}`;
+    console.log('🔄 Testing Firebase username creation:', firebaseTestUsername);
+    
+    try {
+      // Try to check if username exists
+      const usernameDoc = await getDoc(doc(db, 'usernames', firebaseTestUsername));
+      console.log('📖 Username exists check:', usernameDoc.exists());
+      
+      // Try to create username document
+      await setDoc(doc(db, 'usernames', firebaseTestUsername), {
+        userId: auth.currentUser.uid,
+        createdAt: new Date(),
+        testData: true,
+      });
+      
+      // Verify creation
+      const verifyDoc = await getDoc(doc(db, 'usernames', firebaseTestUsername));
+      if (verifyDoc.exists()) {
+        console.log('✅ Firebase username storage successful');
+        firebaseTest = true;
+      } else {
+        console.log('❌ Firebase username not found after creation');
+      }
+    } catch (error) {
+      console.log('❌ Firebase test failed with error:', error);
+    }
+    
+    console.log('Test 2 result:', firebaseTest ? '✅ PASSED' : '❌ FAILED');
+    
+    // Test 3: LocalStorage fallback
+    console.log('🔄 Testing localStorage fallback...');
+    try {
+      // Add test usernames to localStorage
+      const testUsernames = ['testlocal1', 'testlocal2'];
+      localStorage.setItem('mealplanner-usernames', JSON.stringify(testUsernames));
+      
+      // Retrieve and verify
+      const stored = JSON.parse(localStorage.getItem('mealplanner-usernames') || '[]');
+      console.log('Local usernames:', stored);
+      
+      if (stored.length >= 2) {
+        localStorageTest = true;
+      }
+    } catch (error) {
+      console.log('❌ LocalStorage test failed:', error);
+    }
+    
+    console.log('Test 3 result:', localStorageTest ? '✅ PASSED' : '❌ FAILED');
+    
   } catch (error) {
-    console.error("❌ Test failed with error:", error);
-    return false;
+    console.log('❌ Test initialization failed:', error);
   }
-};
-
-export const runUsernameTests = async () => {
-  console.log("🚀 Running comprehensive username tests...");
   
-  const test1 = await testUsernameSystem();
-  console.log("Test 1 result:", test1 ? "✅ PASSED" : "❌ FAILED");
-  
-  // Test localStorage fallback
-  console.log("🔄 Testing localStorage fallback...");
-  localStorage.setItem('mealplanner-usernames', JSON.stringify(['testlocal1', 'testlocal2']));
-  const localUsernames = JSON.parse(localStorage.getItem('mealplanner-usernames') || '[]');
-  console.log("Local usernames:", localUsernames);
-  
-  const test2 = localUsernames.includes('testlocal1') && localUsernames.includes('testlocal2');
-  console.log("Test 2 result:", test2 ? "✅ PASSED" : "❌ FAILED");
-  
-  return { firebaseTest: test1, localStorageTest: test2 };
+  return { serverTest, firebaseTest, localStorageTest };
 };

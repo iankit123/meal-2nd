@@ -95,39 +95,53 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         throw new Error('Failed to initialize authentication');
       }
 
-      // Try Firebase first for username checking
+      // Try server API first for reliable cross-browser username storage
       try {
-        // Check if username already exists in Firebase
-        const usernameDoc = await getDoc(doc(db, 'usernames', newUsername));
-        if (usernameDoc.exists()) {
-          throw new Error('Username already exists');
+        const response = await fetch('/api/usernames', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username: newUsername }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to create username');
         }
 
-        // Create username document in Firebase
-        await setDoc(doc(db, 'usernames', newUsername), {
-          userId: authUser.uid,
-          createdAt: new Date(),
-        });
-
-        // Create user profile in Firebase
-        await setDoc(doc(db, 'users', authUser.uid), {
-          username: newUsername,
-          createdAt: new Date(),
-        });
-
-        console.log('Username stored in Firebase successfully');
-      } catch (firebaseError: any) {
-        console.warn('Firebase not available, using local storage:', firebaseError);
+        console.log('Username stored on server successfully');
+      } catch (serverError: any) {
+        console.warn('Server not available, trying Firebase...', serverError);
         
-        // Fall back to localStorage for demo purposes
-        const existingUsernames = JSON.parse(localStorage.getItem('mealplanner-usernames') || '[]');
-        if (existingUsernames.includes(newUsername)) {
-          throw new Error('Username already exists');
-        }
+        // Try Firebase as fallback
+        try {
+          // Check if username already exists in Firebase
+          const usernameDoc = await getDoc(doc(db, 'usernames', newUsername));
+          if (usernameDoc.exists()) {
+            throw new Error('Username already exists');
+          }
 
-        // Store username locally for demo
-        existingUsernames.push(newUsername);
-        localStorage.setItem('mealplanner-usernames', JSON.stringify(existingUsernames));
+          // Create username document in Firebase
+          await setDoc(doc(db, 'usernames', newUsername), {
+            userId: authUser.uid,
+            createdAt: new Date(),
+          });
+
+          console.log('Username stored in Firebase successfully');
+        } catch (firebaseError: any) {
+          console.warn('Firebase not available, using local storage:', firebaseError);
+          
+          // Final fallback to localStorage for demo purposes
+          const existingUsernames = JSON.parse(localStorage.getItem('mealplanner-usernames') || '[]');
+          if (existingUsernames.includes(newUsername)) {
+            throw new Error('Username already exists');
+          }
+
+          // Store username locally for demo
+          existingUsernames.push(newUsername);
+          localStorage.setItem('mealplanner-usernames', JSON.stringify(existingUsernames));
+        }
       }
 
       setUsername(newUsername);
@@ -151,29 +165,38 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         throw new Error('Failed to initialize authentication');
       }
 
-      // Try Firebase first
+      // Try server API first for reliable cross-browser username lookup
       try {
-        const usernameDoc = await getDoc(doc(db, 'usernames', existingUsername));
-        if (!usernameDoc.exists()) {
+        const response = await fetch(`/api/usernames/${existingUsername}`);
+        if (!response.ok) {
+          throw new Error('Server API failed');
+        }
+        
+        const data = await response.json();
+        if (!data.exists) {
           throw new Error('Username not found');
         }
         
-        const userData = usernameDoc.data();
-        console.log('Username found in Firebase:', existingUsername);
+        console.log('Username found on server:', existingUsername);
+      } catch (serverError: any) {
+        console.warn('Server not available, trying Firebase...', serverError);
         
-        // Update current user to match the username's user ID
-        await setDoc(doc(db, 'users', authUser.uid), {
-          username: existingUsername,
-          originalUserId: userData.userId,
-          loginAt: new Date(),
-        });
-      } catch (firebaseError: any) {
-        console.warn('Firebase not available, checking local storage:', firebaseError);
-        
-        // Fall back to localStorage for demo purposes
-        const existingUsernames = JSON.parse(localStorage.getItem('mealplanner-usernames') || '[]');
-        if (!existingUsernames.includes(existingUsername)) {
-          throw new Error('Username not found');
+        // Try Firebase as fallback
+        try {
+          const usernameDoc = await getDoc(doc(db, 'usernames', existingUsername));
+          if (!usernameDoc.exists()) {
+            throw new Error('Username not found');
+          }
+          
+          console.log('Username found in Firebase:', existingUsername);
+        } catch (firebaseError: any) {
+          console.warn('Firebase not available, checking local storage:', firebaseError);
+          
+          // Final fallback to localStorage for demo purposes
+          const existingUsernames = JSON.parse(localStorage.getItem('mealplanner-usernames') || '[]');
+          if (!existingUsernames.includes(existingUsername)) {
+            throw new Error('Username not found');
+          }
         }
       }
 

@@ -14,9 +14,10 @@ export default function Header() {
     try {
       const results = await runUsernameTests();
       console.log('📊 Test Results:', results);
+      console.log('Server Test:', results.serverTest ? '✅ PASS' : '❌ FAIL');
       console.log('Firebase Test:', results.firebaseTest ? '✅ PASS' : '❌ FAIL');
       console.log('LocalStorage Test:', results.localStorageTest ? '✅ PASS' : '❌ FAIL');
-      alert(`Test Results:\nFirebase Test: ${results.firebaseTest ? 'PASS' : 'FAIL'}\nLocalStorage Test: ${results.localStorageTest ? 'PASS' : 'FAIL'}\n\nCheck console for detailed logs.`);
+      alert(`Test Results:\nServer Test: ${results.serverTest ? 'PASS' : 'FAIL'}\nFirebase Test: ${results.firebaseTest ? 'PASS' : 'FAIL'}\nLocalStorage Test: ${results.localStorageTest ? 'PASS' : 'FAIL'}\n\nCheck console for detailed logs.`);
     } catch (error) {
       console.error('❌ Test execution failed:', error);
       alert('Test execution failed. Check console for details.');
