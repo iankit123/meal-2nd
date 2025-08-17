@@ -213,7 +213,10 @@ export default function WeekPlanGrid({
                             {assignedMeal || "Add meal"}
                           </div>
                         </SelectValue>
-                        <ChevronDown className="h-3 w-3 absolute bottom-1 right-1 pointer-events-none" style={{ color: 'var(--theme-600)' }} />
+                        <ChevronDown
+                          className="h-3 w-3 absolute bottom-1 right-1 pointer-events-none"
+                          style={{ color: "var(--theme-600)" }}
+                        />
                       </SelectTrigger>
 
                       <SelectContent
@@ -248,13 +251,13 @@ export default function WeekPlanGrid({
                                 "transparent")
                             }
                           >
-                            <div className="flex items-center gap-2 w-full">
-                              {assignedMeal === meal && (
+                            <div className="flex items-left gap-2 w-full">
+                              {/* {assignedMeal === meal && (
                                 <Check
                                   className="h-4 w-4"
                                   style={{ color: "var(--theme-600)" }}
                                 />
-                              )}
+                              )} */}
                               {assignedMeal !== meal && <div className="w-4" />}
                               <span style={{ color: "var(--theme-900)" }}>
                                 {meal}
@@ -269,7 +272,7 @@ export default function WeekPlanGrid({
                         >
                           <DialogTrigger asChild>
                             <div
-                              className="flex items-center gap-2 px-2 py-2 text-sm cursor-pointer border-t rounded-b-2xl transition-colors"
+                              className="flex items-left gap-2 px-2 py-2 text-sm cursor-pointer border-t rounded-b-2xl transition-colors"
                               style={{ color: "var(--theme-600)" }}
                               onMouseEnter={(e) =>
                                 (e.currentTarget.style.backgroundColor =

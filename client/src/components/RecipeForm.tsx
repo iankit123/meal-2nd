@@ -124,9 +124,9 @@ export default function RecipeForm({ defaultValues, onSubmit, submitLabel, isLoa
             className="mt-2 border-gray-300 rounded-lg h-32"
             placeholder="Enter recipe instructions..."
           />
-          {errors.instructions && (
+          {/* {errors.instructions && (
             <p className="text-red-500 text-sm mt-1">{errors.instructions.message}</p>
-          )}
+          )} */}
         </div>
 
         {/* Meal Image */}
