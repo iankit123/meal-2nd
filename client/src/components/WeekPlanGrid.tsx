@@ -111,11 +111,8 @@ export default function WeekPlanGrid({
         delete updatedSlots[day][meal];
       }
 
-      // Save to server directly
+      // Save to server directly (optimized - no refetch needed)
       await saveWeekPlanData(updatedSlots);
-      
-      // Trigger refetch to get latest data
-      onUpdate();
       
       console.log(`Successfully updated ${day} ${meal}`);
     } catch (error) {
