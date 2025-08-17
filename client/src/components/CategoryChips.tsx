@@ -22,7 +22,7 @@ export default function CategoryChips({ selectedCategory, onCategoryChange }: Ca
           variant="ghost"
           size="sm"
           onClick={() => onCategoryChange(category.value)}
-          className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-colors ${
+          className={`px-4 py-2 rounded-2xl font-bold text-sm whitespace-nowrap transition-all duration-200 transform hover:scale-105 ${
             selectedCategory === category.value
               ? "meal-chip-active"
               : "meal-chip-inactive"

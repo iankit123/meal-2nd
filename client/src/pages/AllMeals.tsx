@@ -111,7 +111,7 @@ export default function AllMeals() {
           placeholder="Search meals..."
         />
         <Link href="/add">
-          <Button className="meal-primary px-6 py-3 rounded-lg font-medium text-sm whitespace-nowrap shadow-lg">
+          <Button className="cute-button px-6 py-3 font-bold text-sm whitespace-nowrap">
             Add Recipe
           </Button>
         </Link>

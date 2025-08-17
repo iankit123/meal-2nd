@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import catMascotImage from "@assets/generated_images/Cute_cat_food_mascot_23ee73be.png";
 
 interface EmptyStateProps {
   title: string;
@@ -13,16 +14,27 @@ interface EmptyStateProps {
 
 export default function EmptyState({ title, description, action, icon }: EmptyStateProps) {
   return (
-    <div className="text-center py-12">
-      <div className="mb-4">
-        {icon || <Search className="mx-auto w-16 h-16 text-gray-300" />}
+    <div className="text-center py-12 cute-card">
+      <div className="mb-6">
+        {icon || (
+          <div className="flex flex-col items-center">
+            <img 
+              src={catMascotImage} 
+              alt="Cute cat mascot" 
+              className="w-24 h-24 mx-auto mb-2 rounded-2xl shadow-lg"
+            />
+            <div className="text-3xl font-handwritten text-pink-700 transform -rotate-2">
+              A great ♥ way to organise your day
+            </div>
+          </div>
+        )}
       </div>
-      <h3 className="text-lg font-medium text-gray-900 mb-2">{title}</h3>
-      <p className="text-gray-500 mb-6">{description}</p>
+      <h3 className="text-xl font-handwritten font-bold text-pink-900 mb-3 transform rotate-1">{title}</h3>
+      <p className="text-pink-600 mb-8 font-medium">{description}</p>
       {action && (
         <Button
           onClick={action.onClick}
-          className="meal-primary px-6 py-3 rounded-lg font-medium transition-colors"
+          className="cute-button px-8 py-3 font-bold"
         >
           {action.label}
         </Button>

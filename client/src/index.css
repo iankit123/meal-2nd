@@ -1,77 +1,78 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Nunito:wght@300;400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: hsl(210, 20%, 98%);
-  --foreground: hsl(210, 25%, 7.8431%);
+  --background: hsl(335, 25%, 94%);
+  --foreground: hsl(340, 15%, 25%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(210, 25%, 7.8431%);
+  --card-foreground: hsl(340, 15%, 25%);
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(210, 25%, 7.8431%);
-  --primary: hsl(142, 86%, 53%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(210, 11%, 96%);
-  --secondary-foreground: hsl(210, 25%, 7.8431%);
-  --muted: hsl(210, 11%, 96%);
-  --muted-foreground: hsl(215, 16%, 47%);
-  --accent: hsl(210, 11%, 96%);
-  --accent-foreground: hsl(210, 25%, 7.8431%);
-  --destructive: hsl(0, 84%, 60%);
+  --popover-foreground: hsl(340, 15%, 25%);
+  --primary: hsl(329, 48%, 84%);
+  --primary-foreground: hsl(340, 15%, 25%);
+  --secondary: hsl(335, 35%, 90%);
+  --secondary-foreground: hsl(340, 15%, 25%);
+  --muted: hsl(335, 20%, 88%);
+  --muted-foreground: hsl(335, 10%, 50%);
+  --accent: hsl(329, 48%, 84%);
+  --accent-foreground: hsl(340, 15%, 25%);
+  --destructive: hsl(0, 75%, 70%);
   --destructive-foreground: hsl(0, 0%, 100%);
-  --border: hsl(210, 18%, 87%);
-  --input: hsl(210, 18%, 97%);
-  --ring: hsl(142, 86%, 53%);
-  --chart-1: hsl(203.8863, 88.2845%, 53.1373%);
-  --chart-2: hsl(159.7826, 100%, 36.0784%);
-  --chart-3: hsl(42.0290, 92.8251%, 56.2745%);
-  --chart-4: hsl(147.1429, 78.5047%, 41.9608%);
-  --chart-5: hsl(341.4894, 75.2000%, 50.9804%);
+  --border: hsl(329, 30%, 85%);
+  --input: hsl(329, 20%, 96%);
+  --ring: hsl(329, 48%, 84%);
+  --chart-1: hsl(329, 48%, 84%);
+  --chart-2: hsl(45, 88%, 75%);
+  --chart-3: hsl(120, 45%, 75%);
+  --chart-4: hsl(200, 45%, 75%);
+  --chart-5: hsl(280, 45%, 75%);
   --sidebar: hsl(0, 0%, 100%);
-  --sidebar-foreground: hsl(210, 25%, 7.8431%);
-  --sidebar-primary: hsl(142, 86%, 53%);
-  --sidebar-primary-foreground: hsl(0, 0%, 100%);
-  --sidebar-accent: hsl(210, 11%, 96%);
-  --sidebar-accent-foreground: hsl(210, 25%, 7.8431%);
-  --sidebar-border: hsl(210, 18%, 87%);
-  --sidebar-ring: hsl(142, 86%, 53%);
-  --font-sans: 'Inter', sans-serif;
+  --sidebar-foreground: hsl(340, 15%, 25%);
+  --sidebar-primary: hsl(329, 48%, 84%);
+  --sidebar-primary-foreground: hsl(340, 15%, 25%);
+  --sidebar-accent: hsl(335, 35%, 90%);
+  --sidebar-accent-foreground: hsl(340, 15%, 25%);
+  --sidebar-border: hsl(329, 30%, 85%);
+  --sidebar-ring: hsl(329, 48%, 84%);
+  --font-sans: 'Nunito', sans-serif;
+  --font-handwritten: 'Kalam', cursive;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
-  --radius: 0.75rem;
-  --green-50: hsl(138, 76%, 97%);
-  --green-100: hsl(141, 84%, 93%);
-  --green-200: hsl(141, 79%, 85%);
-  --green-300: hsl(142, 77%, 73%);
-  --green-400: hsl(142, 86%, 53%);
-  --green-500: hsl(142, 71%, 45%);
-  --green-600: hsl(142, 72%, 29%);
-  --green-700: hsl(142, 72%, 29%);
-  --green-800: hsl(142, 69%, 24%);
-  --green-900: hsl(143, 64%, 20%);
+  --radius: 1.25rem;
+  --pink-50: hsl(335, 50%, 97%);
+  --pink-100: hsl(335, 45%, 92%);
+  --pink-200: hsl(335, 40%, 85%);
+  --pink-300: hsl(329, 48%, 84%);
+  --pink-400: hsl(329, 50%, 75%);
+  --pink-500: hsl(329, 55%, 65%);
+  --pink-600: hsl(329, 60%, 55%);
+  --pink-700: hsl(329, 65%, 45%);
+  --pink-800: hsl(329, 70%, 35%);
+  --pink-900: hsl(329, 75%, 25%);
 }
 
 .dark {
-  --background: hsl(0, 0%, 0%);
-  --foreground: hsl(200, 6.6667%, 91.1765%);
-  --card: hsl(228, 9.8039%, 10%);
-  --card-foreground: hsl(0, 0%, 85.0980%);
-  --popover: hsl(0, 0%, 0%);
-  --popover-foreground: hsl(200, 6.6667%, 91.1765%);
-  --primary: hsl(142, 86%, 53%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(195, 15.3846%, 94.9020%);
-  --secondary-foreground: hsl(210, 25%, 7.8431%);
-  --muted: hsl(0, 0%, 9.4118%);
-  --muted-foreground: hsl(210, 3.3898%, 46.2745%);
-  --accent: hsl(205.7143, 70%, 7.8431%);
-  --accent-foreground: hsl(203.7736, 87.6033%, 52.5490%);
-  --destructive: hsl(0, 84%, 60%);
+  --background: hsl(325, 20%, 15%);
+  --foreground: hsl(335, 25%, 90%);
+  --card: hsl(325, 15%, 20%);
+  --card-foreground: hsl(335, 25%, 90%);
+  --popover: hsl(325, 15%, 20%);
+  --popover-foreground: hsl(335, 25%, 90%);
+  --primary: hsl(329, 48%, 70%);
+  --primary-foreground: hsl(325, 20%, 15%);
+  --secondary: hsl(325, 20%, 25%);
+  --secondary-foreground: hsl(335, 25%, 90%);
+  --muted: hsl(325, 15%, 22%);
+  --muted-foreground: hsl(325, 10%, 60%);
+  --accent: hsl(329, 48%, 70%);
+  --accent-foreground: hsl(325, 20%, 15%);
+  --destructive: hsl(0, 75%, 65%);
   --destructive-foreground: hsl(0, 0%, 100%);
-  --border: hsl(210, 5.2632%, 14.9020%);
-  --input: hsl(207.6923, 27.6596%, 18.4314%);
-  --ring: hsl(142, 86%, 53%);
+  --border: hsl(325, 20%, 30%);
+  --input: hsl(325, 15%, 25%);
+  --ring: hsl(329, 48%, 70%);
 }
 
 @layer base {
@@ -86,17 +87,48 @@
 
 /* Custom utility classes */
 .meal-primary {
-  @apply bg-green-400 hover:bg-green-500 text-white;
+  @apply bg-pink-400 hover:bg-pink-500 text-white shadow-md;
 }
 
 .meal-card {
-  @apply bg-white rounded-xl shadow-lg overflow-hidden;
+  @apply bg-white rounded-2xl shadow-xl overflow-hidden border-2 border-pink-100;
 }
 
 .meal-chip-active {
-  @apply bg-green-400 text-white;
+  @apply bg-pink-400 text-white shadow-md;
 }
 
 .meal-chip-inactive {
-  @apply bg-white text-gray-600 border border-gray-200 hover:bg-gray-50;
+  @apply bg-white text-pink-700 border-2 border-pink-200 hover:bg-pink-50 shadow-sm;
+}
+
+/* Handwritten font utility */
+.font-handwritten {
+  font-family: var(--font-handwritten);
+}
+
+/* Cute card styles */
+.cute-card {
+  @apply bg-white rounded-2xl shadow-xl border-2 border-pink-100 p-4;
+}
+
+.cute-button {
+  @apply bg-pink-300 hover:bg-pink-400 text-pink-900 font-medium rounded-2xl px-4 py-2 shadow-lg transition-all duration-200 transform hover:scale-105;
+}
+
+.cute-input {
+  @apply bg-pink-50 border-2 border-pink-200 rounded-2xl px-4 py-2 focus:border-pink-400 focus:ring-pink-400;
+}
+
+/* Week plan grid styling */
+.week-plan-day {
+  @apply bg-pink-200 text-pink-900 font-bold rounded-2xl p-3 text-center shadow-md;
+}
+
+.week-plan-meal-slot {
+  @apply bg-white rounded-2xl p-3 border-2 border-pink-100 shadow-md hover:shadow-lg transition-shadow;
+}
+
+.week-plan-header {
+  @apply bg-pink-300 text-pink-900 font-bold rounded-2xl p-2 text-center shadow-md;
 }

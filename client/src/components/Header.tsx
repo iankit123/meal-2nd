@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
-import { Menu, X, Utensils, Calendar, Bookmark } from "lucide-react";
+import { Menu, X, Utensils, Calendar, Bookmark, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -19,17 +19,17 @@ export default function Header() {
       <Button
         variant="ghost"
         size="sm"
-        className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium relative ${
+        className={`flex items-center space-x-2 px-4 py-2 rounded-2xl text-sm font-medium relative transition-all duration-200 transform hover:scale-105 ${
           item.active
-            ? "bg-green-50 text-green-700 hover:bg-green-50"
-            : "text-gray-600 hover:bg-gray-100"
+            ? "bg-pink-200 text-pink-900 hover:bg-pink-200 shadow-md"
+            : "text-pink-700 hover:bg-pink-50 hover:shadow-sm"
         }`}
         onClick={onClick}
       >
         <item.icon className="w-4 h-4" />
         <span>{item.label}</span>
         {item.hasNew && (
-          <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-medium">
+          <span className="bg-pink-500 text-white text-xs px-2 py-0.5 rounded-full font-medium shadow-sm">
             New
           </span>
         )}
@@ -38,30 +38,32 @@ export default function Header() {
   );
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-md mx-auto px-4 py-3">
+    <header className="bg-white shadow-xl border-b-4 border-pink-200 sticky top-0 z-50">
+      <div className="max-w-md mx-auto px-4 py-4">
         {/* Header Content */}
         <div className="flex items-center justify-between mb-4">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-green-400 rounded-lg flex items-center justify-center">
-              <Utensils className="w-4 h-4 text-white" />
+            <div className="w-10 h-10 bg-pink-400 rounded-2xl flex items-center justify-center shadow-lg transform rotate-12">
+              <Heart className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-xl font-semibold text-gray-900">Meal Book</h1>
+            <h1 className="text-2xl font-handwritten font-bold text-pink-900 transform -rotate-2">
+              Meal planner
+            </h1>
           </Link>
           
           {/* Mobile Menu Button */}
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="md:hidden p-2 rounded-lg hover:bg-gray-100">
-                <Menu className="w-5 h-5 text-gray-600" />
+              <Button variant="ghost" size="sm" className="md:hidden p-2 rounded-2xl hover:bg-pink-50 hover:shadow-md transition-all duration-200">
+                <Menu className="w-5 h-5 text-pink-700" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-64">
+            <SheetContent side="right" className="w-64 bg-pink-50 border-l-4 border-pink-200">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">Menu</h2>
+                <h2 className="text-lg font-handwritten font-bold text-pink-900">Menu</h2>
               </div>
-              <nav className="space-y-2">
+              <nav className="space-y-3">
                 {navItems.map((item) => (
                   <NavButton
                     key={item.path}

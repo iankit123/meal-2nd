@@ -53,9 +53,9 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
   ];
 
   const mealTimes: Array<{ key: keyof WeekPlanSlot; label: string; color: string }> = [
-    { key: 'breakfast', label: 'Breakfast', color: 'bg-green-100' },
-    { key: 'lunch', label: 'Lunch', color: 'bg-orange-100' },
-    { key: 'dinner', label: 'Dinner', color: 'bg-purple-100' },
+    { key: 'breakfast', label: 'Breakfast', color: 'bg-pink-100' },
+    { key: 'lunch', label: 'Lunch', color: 'bg-pink-200' },
+    { key: 'dinner', label: 'Dinner', color: 'bg-pink-300' },
   ];
 
   const addNewMeal = () => {
@@ -106,10 +106,10 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
     <div className="space-y-6 max-w-full overflow-x-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">Weekly Meal Plan</h1>
+        <h1 className="text-2xl font-handwritten font-bold text-pink-900 transform -rotate-1">Weekly Meal Plan</h1>
         <Button 
           onClick={handleSaveChanges}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-6"
+          className="cute-button"
           disabled={!hasChanges}
         >
           Save Changes
@@ -117,12 +117,12 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
       </div>
 
       {/* Week Plan Grid */}
-      <div className="bg-white rounded-lg border overflow-hidden w-full">
+      <div className="cute-card overflow-hidden w-full">
         {/* Header Row */}
-        <div className="grid grid-cols-[60px_1fr_1fr_1fr] border-b bg-gray-50">
-          <div className="p-3 font-semibold text-purple-600 text-sm border-r flex items-center justify-center">Day</div>
+        <div className="grid grid-cols-[80px_1fr_1fr_1fr] gap-2 mb-4">
+          <div className="week-plan-header">Day</div>
           {mealTimes.map((mealTime) => (
-            <div key={mealTime.key} className="p-3 font-semibold text-purple-600 text-center text-sm border-r last:border-r-0 flex items-center justify-center">
+            <div key={mealTime.key} className="week-plan-header">
               {mealTime.label}
             </div>
           ))}
@@ -130,9 +130,9 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
 
         {/* Day Rows */}
         {days.map((day) => (
-          <div key={day.key} className="grid grid-cols-[60px_1fr_1fr_1fr] border-b last:border-b-0 hover:bg-gray-25">
+          <div key={day.key} className="grid grid-cols-[80px_1fr_1fr_1fr] gap-2 mb-3">
             {/* Day Label */}
-            <div className="p-3 font-medium text-purple-600 border-r flex items-center justify-center text-sm">
+            <div className="week-plan-day">
               {day.label}
             </div>
 
@@ -141,46 +141,46 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
               const assignedMeal = weekPlan.slots[day.key]?.[mealTime.key];
 
               return (
-                <div key={mealTime.key} className="p-2 border-r last:border-r-0">
+                <div key={mealTime.key} className="week-plan-meal-slot">
                   <Select
                     value={assignedMeal || "none"}
                     onValueChange={(value) => {
                       handleMealChange(day.key, mealTime.key, value === "none" ? null : value);
                     }}
                   >
-                    <SelectTrigger className={`w-full ${mealTime.color} border border-gray-200 rounded-lg text-xs font-medium text-gray-800 min-h-12 px-2 py-1 pr-6 relative [&>svg]:hidden`}>
+                    <SelectTrigger className={`w-full ${mealTime.color} border-2 border-pink-200 rounded-2xl text-xs font-medium text-pink-900 min-h-12 px-2 py-1 pr-6 relative [&>svg]:hidden hover:shadow-md transition-shadow`}>
                       <SelectValue asChild>
                         <div className="text-left leading-tight whitespace-normal break-words overflow-hidden flex-1">
-                          {assignedMeal || "Select..."}
+                          {assignedMeal || "Add meal"}
                         </div>
                       </SelectValue>
-                      <ChevronDown className="h-3 w-3 text-gray-500 absolute bottom-1 right-1" />
+                      <ChevronDown className="h-3 w-3 text-pink-600 absolute bottom-1 right-1" />
                     </SelectTrigger>
                     
-                    <SelectContent className="max-h-60">
-                      <div className="px-2 py-1 text-sm text-gray-500 border-b bg-gray-50">
+                    <SelectContent className="max-h-60 rounded-2xl border-2 border-pink-200">
+                      <div className="px-2 py-1 text-sm text-pink-700 border-b bg-pink-50 rounded-t-2xl">
                         Select a meal...
                       </div>
                       {mealList.map((meal) => (
-                        <SelectItem key={meal} value={meal} className="text-sm">
+                        <SelectItem key={meal} value={meal} className="text-sm hover:bg-pink-50 rounded-xl mx-1">
                           <div className="flex items-center gap-2 w-full">
-                            {assignedMeal === meal && <Check className="h-4 w-4 text-green-600" />}
+                            {assignedMeal === meal && <Check className="h-4 w-4 text-pink-600" />}
                             {assignedMeal !== meal && <div className="w-4" />}
-                            <span>{meal}</span>
+                            <span className="text-pink-900">{meal}</span>
                           </div>
                         </SelectItem>
                       ))}
                       
                       <Dialog open={showAddMeal} onOpenChange={setShowAddMeal}>
                         <DialogTrigger asChild>
-                          <div className="flex items-center gap-2 px-2 py-2 text-sm text-gray-600 hover:bg-gray-50 cursor-pointer border-t">
+                          <div className="flex items-center gap-2 px-2 py-2 text-sm text-pink-600 hover:bg-pink-50 cursor-pointer border-t rounded-b-2xl">
                             <Plus className="h-4 w-4" />
                             <span>Add New Meal</span>
                           </div>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-md">
+                        <DialogContent className="sm:max-w-md cute-card border-4 border-pink-300">
                           <DialogHeader>
-                            <DialogTitle>Add New Meal</DialogTitle>
+                            <DialogTitle className="font-handwritten text-xl text-pink-900">Add New Meal</DialogTitle>
                           </DialogHeader>
                           <div className="space-y-4">
                             <Input
@@ -192,9 +192,10 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
                                   addNewMeal();
                                 }
                               }}
+                              className="cute-input"
                             />
                             <div className="flex gap-2">
-                              <Button onClick={addNewMeal} className="flex-1">
+                              <Button onClick={addNewMeal} className="cute-button flex-1">
                                 Add Meal
                               </Button>
                               <Button 
@@ -203,6 +204,7 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
                                   setShowAddMeal(false);
                                   setNewMealName("");
                                 }}
+                                className="rounded-2xl border-2 border-pink-200 text-pink-700 hover:bg-pink-50"
                               >
                                 Cancel
                               </Button>

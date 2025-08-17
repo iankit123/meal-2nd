@@ -16,7 +16,7 @@ import NotFound from "./pages/not-found";
 
 function Router() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
       <main className="max-w-md mx-auto px-4 pb-8">
         <Switch>
