@@ -83,12 +83,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const createUser = async (newUsername: string) => {
     try {
-      // Check if username already exists
-      const usernameDoc = await getDoc(doc(db, 'usernames', newUsername));
-      if (usernameDoc.exists()) {
-        throw new Error('Username already exists');
-      }
-
       // Initialize anonymous auth if not already done
       let authUser = user;
       if (!authUser) {
@@ -99,17 +93,38 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         throw new Error('Failed to initialize authentication');
       }
 
-      // Create username document
-      await setDoc(doc(db, 'usernames', newUsername), {
-        userId: authUser.uid,
-        createdAt: new Date(),
-      });
+      // For development/demo purposes, use localStorage to check username uniqueness
+      const existingUsernames = JSON.parse(localStorage.getItem('mealplanner-usernames') || '[]');
+      if (existingUsernames.includes(newUsername)) {
+        throw new Error('Username already exists');
+      }
 
-      // Create user profile
-      await setDoc(doc(db, 'users', authUser.uid), {
-        username: newUsername,
-        createdAt: new Date(),
-      });
+      // Store username locally for demo
+      existingUsernames.push(newUsername);
+      localStorage.setItem('mealplanner-usernames', JSON.stringify(existingUsernames));
+
+      // Try Firebase first, but fall back to local storage if it fails
+      try {
+        // Check if username already exists in Firebase
+        const usernameDoc = await getDoc(doc(db, 'usernames', newUsername));
+        if (usernameDoc.exists()) {
+          throw new Error('Username already exists');
+        }
+
+        // Create username document
+        await setDoc(doc(db, 'usernames', newUsername), {
+          userId: authUser.uid,
+          createdAt: new Date(),
+        });
+
+        // Create user profile
+        await setDoc(doc(db, 'users', authUser.uid), {
+          username: newUsername,
+          createdAt: new Date(),
+        });
+      } catch (firebaseError) {
+        console.warn('Firebase not available, using local storage:', firebaseError);
+      }
 
       setUsername(newUsername);
       setIsAuthenticated(true);
@@ -122,14 +137,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const loginUser = async (existingUsername: string) => {
     try {
-      // Check if username exists
-      const usernameDoc = await getDoc(doc(db, 'usernames', existingUsername));
-      if (!usernameDoc.exists()) {
-        throw new Error('Username not found');
-      }
-
-      const userData = usernameDoc.data();
-      
       // Initialize anonymous auth if not already done
       let authUser = user;
       if (!authUser) {
@@ -140,12 +147,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         throw new Error('Failed to initialize authentication');
       }
 
-      // Update current user to match the username's user ID
-      await setDoc(doc(db, 'users', authUser.uid), {
-        username: existingUsername,
-        originalUserId: userData.userId,
-        loginAt: new Date(),
-      });
+      // Check localStorage first for demo purposes
+      const existingUsernames = JSON.parse(localStorage.getItem('mealplanner-usernames') || '[]');
+      if (!existingUsernames.includes(existingUsername)) {
+        // Try Firebase as fallback
+        try {
+          const usernameDoc = await getDoc(doc(db, 'usernames', existingUsername));
+          if (!usernameDoc.exists()) {
+            throw new Error('Username not found');
+          }
+          
+          const userData = usernameDoc.data();
+          
+          // Update current user to match the username's user ID
+          await setDoc(doc(db, 'users', authUser.uid), {
+            username: existingUsername,
+            originalUserId: userData.userId,
+            loginAt: new Date(),
+          });
+        } catch (firebaseError) {
+          // If not in localStorage and Firebase fails, username doesn't exist
+          throw new Error('Username not found');
+        }
+      }
 
       setUsername(existingUsername);
       setIsAuthenticated(true);

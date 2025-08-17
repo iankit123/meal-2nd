@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { User, UserPlus, AlertCircle, Check } from "lucide-react";
@@ -34,7 +40,7 @@ export default function UsernameAuth() {
   const handleCreateUser = async () => {
     setError("");
     setSuccess("");
-    
+
     const validationError = validateUsername(username);
     if (validationError) {
       setError(validationError);
@@ -60,7 +66,7 @@ export default function UsernameAuth() {
   const handleLoginUser = async () => {
     setError("");
     setSuccess("");
-    
+
     const validationError = validateUsername(username);
     if (validationError) {
       setError(validationError);
@@ -73,7 +79,9 @@ export default function UsernameAuth() {
       setSuccess(`Welcome back ${username}!`);
     } catch (err: any) {
       if (err.message?.includes("not found")) {
-        setError("Username not found. Please create an account or check spelling.");
+        setError(
+          "Username not found. Please create an account or check spelling.",
+        );
       } else {
         setError("Failed to login. Please try again.");
       }
@@ -83,44 +91,62 @@ export default function UsernameAuth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{
-      background: 'linear-gradient(135deg, var(--theme-50) 0%, var(--theme-100) 100%)'
-    }}>
-      <Card className="w-full max-w-md shadow-xl" style={{
-        borderColor: 'var(--theme-200)',
-        borderWidth: '3px'
-      }}>
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{
+        background:
+          "linear-gradient(135deg, var(--theme-50) 0%, var(--theme-100) 100%)",
+      }}
+    >
+      <Card
+        className="w-full max-w-md shadow-xl"
+        style={{
+          borderColor: "var(--theme-200)",
+          borderWidth: "3px",
+        }}
+      >
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-handwritten font-bold" style={{ color: 'var(--theme-900)' }}>
+          <CardTitle
+            className="text-2xl font-handwritten font-bold"
+            style={{ color: "var(--theme-900)" }}
+          >
             Welcome to Meal Planner
           </CardTitle>
-          <CardDescription style={{ color: 'var(--theme-700)' }}>
+          <CardDescription style={{ color: "var(--theme-700)" }}>
             Choose your username to get started with your personal meal planning
           </CardDescription>
         </CardHeader>
-        
+
         <CardContent>
           <Tabs defaultValue="create" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="create" className="flex items-center space-x-2">
+              <TabsTrigger
+                value="create"
+                className="flex items-center space-x-2"
+              >
                 <UserPlus className="w-4 h-4" />
-                <span>Create Account</span>
+                <span>Create Unique Username</span>
               </TabsTrigger>
-              <TabsTrigger value="login" className="flex items-center space-x-2">
+              <TabsTrigger
+                value="login"
+                className="flex items-center space-x-2"
+              >
                 <User className="w-4 h-4" />
-                <span>Login</span>
+                <span>Existing user</span>
               </TabsTrigger>
             </TabsList>
-            
+
             <div className="space-y-4">
               <Input
                 placeholder="Enter your username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    const activeTab = document.querySelector('[data-state="active"]')?.getAttribute('value');
-                    if (activeTab === 'create') {
+                  if (e.key === "Enter") {
+                    const activeTab = document
+                      .querySelector('[data-state="active"]')
+                      ?.getAttribute("value");
+                    if (activeTab === "create") {
                       handleCreateUser();
                     } else {
                       handleLoginUser();
@@ -129,12 +155,14 @@ export default function UsernameAuth() {
                 }}
                 disabled={isLoading}
                 className="text-center font-medium"
-                style={{
-                  borderColor: 'var(--theme-300)',
-                  '--focus-ring-color': 'var(--theme-500)'
-                } as React.CSSProperties}
+                style={
+                  {
+                    borderColor: "var(--theme-300)",
+                    "--focus-ring-color": "var(--theme-500)",
+                  } as React.CSSProperties
+                }
               />
-              
+
               {error && (
                 <Alert className="border-red-200 bg-red-50">
                   <AlertCircle className="h-4 w-4 text-red-600" />
@@ -143,7 +171,7 @@ export default function UsernameAuth() {
                   </AlertDescription>
                 </Alert>
               )}
-              
+
               {success && (
                 <Alert className="border-green-200 bg-green-50">
                   <Check className="h-4 w-4 text-green-600" />
@@ -153,44 +181,47 @@ export default function UsernameAuth() {
                 </Alert>
               )}
             </div>
-            
+
             <TabsContent value="create" className="mt-4">
-              <Button 
+              <Button
                 onClick={handleCreateUser}
                 disabled={isLoading}
                 className="w-full font-medium"
                 style={{
-                  backgroundColor: 'var(--theme-600)',
-                  color: 'white'
+                  backgroundColor: "var(--theme-600)",
+                  color: "white",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--theme-700)';
+                  e.currentTarget.style.backgroundColor = "var(--theme-700)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--theme-600)';
+                  e.currentTarget.style.backgroundColor = "var(--theme-600)";
                 }}
               >
                 {isLoading ? "Creating Account..." : "Create Username"}
               </Button>
-              <p className="text-xs text-center mt-2" style={{ color: 'var(--theme-600)' }}>
+              <p
+                className="text-xs text-center mt-2"
+                style={{ color: "var(--theme-600)" }}
+              >
                 Username must be 3-20 characters, letters and numbers only
               </p>
             </TabsContent>
-            
+
             <TabsContent value="login" className="mt-4">
-              <Button 
+              <Button
                 onClick={handleLoginUser}
                 disabled={isLoading}
                 className="w-full font-medium"
                 style={{
-                  backgroundColor: 'var(--theme-600)',
-                  color: 'white'
+                  backgroundColor: "var(--theme-600)",
+                  color: "white",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--theme-700)';
+                  e.currentTarget.style.backgroundColor = "var(--theme-700)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'var(--theme-600)';
+                  e.currentTarget.style.backgroundColor = "var(--theme-600)";
                 }}
               >
                 {isLoading ? "Logging In..." : "Access My Meals"}

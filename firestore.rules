@@ -6,6 +6,17 @@ service cloud.firestore {
       allow read: if true;
     }
     
+    // Allow username documents to be created and read
+    match /usernames/{username} {
+      allow read, create: if request.auth != null;
+      allow write: if false; // Prevent updates once created
+    }
+    
+    // Allow user profile documents
+    match /users/{userId} {
+      allow read, write, create: if request.auth != null && request.auth.uid == userId;
+    }
+    
     // Recipes collection
     match /recipes/{recipeId} {
       // Allow authenticated users to create recipes
