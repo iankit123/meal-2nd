@@ -10,38 +10,15 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { User, UserPlus, AlertCircle, Check, TestTube } from "lucide-react";
+import { User, UserPlus, AlertCircle, Check } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { runUsernameTests } from "../utils/testUsername";
 
 export default function UsernameAuth() {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [testResults, setTestResults] = useState<any>(null);
   const { createUser, loginUser } = useAuth();
-
-  const handleRunTests = async () => {
-    setError("");
-    setSuccess("");
-    console.log("Starting username system tests...");
-    
-    try {
-      const results = await runUsernameTests();
-      setTestResults(results);
-      
-      if (results.serverTest) {
-        setSuccess("✅ Server API working! Cross-browser username access enabled.");
-      } else if (results.localStorageTest) {
-        setError("Server unavailable, using local storage (browser-specific usernames)");
-      } else {
-        setError("All storage systems failed. Please check your connection.");
-      }
-    } catch (err: any) {
-      setError("Test execution failed: " + err.message);
-    }
-  };
 
   const validateUsername = (username: string) => {
     const alphanumeric = /^[a-zA-Z0-9]+$/;
@@ -251,33 +228,6 @@ export default function UsernameAuth() {
               </Button>
             </TabsContent>
           </Tabs>
-          
-          {/* Test Button for Debugging */}
-          <div className="mt-6 pt-4 border-t border-gray-200">
-            <Button
-              onClick={handleRunTests}
-              variant="outline"
-              className="w-full flex items-center gap-2"
-              disabled={isLoading}
-            >
-              <TestTube className="w-4 h-4" />
-              Run System Tests
-            </Button>
-            
-            {testResults && (
-              <div className="mt-2 p-3 bg-gray-50 rounded-lg text-sm">
-                <div className="font-medium mb-1">Test Results:</div>
-                <div>Server Test: {testResults.serverTest ? '✅ PASS' : '❌ FAIL'}</div>
-                <div>Firebase Test: {testResults.firebaseTest ? '✅ PASS' : '❌ FAIL'}</div>
-                <div>LocalStorage Test: {testResults.localStorageTest ? '✅ PASS' : '❌ FAIL'}</div>
-                {testResults.serverTest && (
-                  <div className="text-green-600 font-medium mt-1">
-                    ✅ Cross-browser username access working
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
         </CardContent>
       </Card>
     </div>

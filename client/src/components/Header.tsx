@@ -1,36 +1,14 @@
 import { Link, useLocation } from "wouter";
-import { Utensils, Calendar, Bookmark, Star, LogOut, TestTube } from "lucide-react";
+import { Utensils, Calendar, Bookmark, Star, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../context/AuthContext";
-import { runUsernameTests } from "../utils/testUsername";
-import { quickSystemTest } from "../utils/quickTest";
 import catMascotImage from "@assets/generated_images/Cute_cat_food_mascot_23ee73be.png";
 
 export default function Header() {
   const [location] = useLocation();
   const { username, logout } = useAuth();
 
-  const handleRunTests = async () => {
-    console.log('🧪 Running Quick System Test...');
-    try {
-      // First run a quick test
-      const quickResult = await quickSystemTest();
-      if (quickResult.server) {
-        console.log('✅ Quick test passed, running full tests...');
-        const results = await runUsernameTests();
-        console.log('📊 Test Results:', results);
-        console.log('Server Test:', results.serverTest ? '✅ PASS' : '❌ FAIL');
-        console.log('Firebase Test:', results.firebaseTest ? '✅ PASS' : '❌ FAIL');
-        console.log('LocalStorage Test:', results.localStorageTest ? '✅ PASS' : '❌ FAIL');
-        alert(`Test Results:\nServer Test: ${results.serverTest ? 'PASS' : 'FAIL'}\nFirebase Test: ${results.firebaseTest ? 'PASS' : 'FAIL'}\nLocalStorage Test: ${results.localStorageTest ? 'PASS' : 'FAIL'}\n\nCheck console for detailed logs.`);
-      } else {
-        alert(`Quick Test Failed: ${quickResult.message}\n\nCheck console for detailed logs.`);
-      }
-    } catch (error) {
-      console.error('❌ Test execution failed:', error);
-      alert('Test execution failed. Check console for details.');
-    }
-  };
+
 
   const navItems = [
     {
@@ -110,15 +88,6 @@ export default function Header() {
 
           {/* Right Controls and Cat Mascot */}
           <div className="flex items-center space-x-2">
-            <Button
-              onClick={handleRunTests}
-              variant="ghost"
-              size="sm"
-              className="p-2 rounded-full hover:bg-white/20 transition-colors"
-              title="Run Tests"
-            >
-              <TestTube className="w-4 h-4" style={{ color: "var(--theme-600)" }} />
-            </Button>
             <Button
               onClick={logout}
               variant="ghost"
