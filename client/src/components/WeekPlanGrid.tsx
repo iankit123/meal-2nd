@@ -30,7 +30,9 @@ export default function WeekPlanGrid({
   onUpdate,
 }: WeekPlanGridProps) {
   const { toast } = useToast();
+  const [localWeekPlan, setLocalWeekPlan] = useState<WeekPlan>(weekPlan);
   const [hasChanges, setHasChanges] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [mealList, setMealList] = useState<string[]>([
     "Appe",
     "Guacamole toast",
@@ -89,69 +91,101 @@ export default function WeekPlanGrid({
     }
   };
 
-  const handleMealChange = async (
+  // Update local state when weekPlan prop changes
+  React.useEffect(() => {
+    setLocalWeekPlan(weekPlan);
+    setHasChanges(false);
+  }, [weekPlan]);
+
+  const handleMealChange = (
     day: string,
     meal: keyof WeekPlanSlot,
     mealName: string | null,
   ) => {
+    console.log(`Locally updating ${day} ${meal} to:`, mealName);
+    
+    // Update local state immediately (no server call)
+    const updatedSlots = {
+      ...localWeekPlan.slots,
+      [day]: {
+        ...localWeekPlan.slots[day],
+      },
+    };
+
+    if (mealName && mealName !== "none") {
+      updatedSlots[day][meal] = mealName;
+    } else {
+      delete updatedSlots[day][meal];
+    }
+
+    const updatedWeekPlan = {
+      ...localWeekPlan,
+      slots: updatedSlots,
+    };
+
+    setLocalWeekPlan(updatedWeekPlan);
+    setHasChanges(true);
+  };
+
+  const handleSaveChanges = async () => {
+    if (!hasChanges) return;
+    
+    setIsSaving(true);
     try {
-      console.log(`Updating ${day} ${meal} to:`, mealName);
+      console.log("Saving meal plan changes to server...");
+      await saveWeekPlanData(localWeekPlan.slots);
       
-      // Create updated slots immediately
-      const updatedSlots = {
-        ...weekPlan.slots,
-        [day]: {
-          ...weekPlan.slots[day],
-        },
-      };
-
-      if (mealName && mealName !== "none") {
-        updatedSlots[day][meal] = mealName;
-      } else {
-        delete updatedSlots[day][meal];
-      }
-
-      // Save to server directly
-      await saveWeekPlanData(updatedSlots);
-      
-      // Trigger refetch to get latest data
+      // Trigger refetch to sync with server
       onUpdate();
+      setHasChanges(false);
       
-      console.log(`Successfully updated ${day} ${meal}`);
+      toast({
+        title: "Success",
+        description: "Meal plan saved successfully!",
+      });
+      
+      console.log("Meal plan saved successfully");
     } catch (error) {
-      console.error("Failed to update meal:", error);
+      console.error("Failed to save meal plan:", error);
       toast({
         title: "Error",
-        description: "Failed to update meal plan",
+        description: "Failed to save meal plan",
         variant: "destructive",
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const handleSaveChanges = () => {
-    setHasChanges(false);
-    toast({
-      title: "Success",
-      description: "Week plan saved successfully!",
-    });
-  };
+
 
   return (
     <div className="space-y-6 max-w-full overflow-x-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1
-          className="text-2xl font-handwritten font-bold transform -rotate-1"
-          style={{ color: "var(--theme-900)" }}
-        >
-          Weekly Meal Plan
-        </h1>
+        <div className="flex items-center gap-2">
+          <h1
+            className="text-2xl font-handwritten font-bold transform -rotate-1"
+            style={{ color: "var(--theme-900)" }}
+          >
+            Weekly Meal Plan
+          </h1>
+          {hasChanges && (
+            <span className="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-600 font-medium">
+              Unsaved changes
+            </span>
+          )}
+        </div>
         <Button
           onClick={handleSaveChanges}
           className="cute-button"
-          disabled={!hasChanges}
+          disabled={!hasChanges || isSaving}
+          style={{
+            backgroundColor: hasChanges ? "var(--theme-600)" : "var(--theme-300)",
+            color: "white",
+          }}
         >
-          Save Changes
+          {isSaving ? "Saving..." : "Save Changes"}
         </Button>
       </div>
 
@@ -182,7 +216,7 @@ export default function WeekPlanGrid({
 
             /* Meal Columns for this day */
             ...mealTimes.map((mealTime) => {
-                const assignedMeal = weekPlan.slots[day.key]?.[mealTime.key];
+                const assignedMeal = localWeekPlan.slots[day.key]?.[mealTime.key];
 
                 return (
                   <div
