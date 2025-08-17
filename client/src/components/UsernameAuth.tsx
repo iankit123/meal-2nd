@@ -125,7 +125,7 @@ export default function UsernameAuth() {
                 className="flex items-center space-x-2"
               >
                 <UserPlus className="w-4 h-4" />
-                <span>Create Unique Username</span>
+                <span>Create Username</span>
               </TabsTrigger>
               <TabsTrigger
                 value="login"
