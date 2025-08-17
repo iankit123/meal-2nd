@@ -163,15 +163,14 @@ export default function WeekPlanGrid({
           ))}
 
           {/* All Grid Cells */}
-          {days.map((day) => (
-            <React.Fragment key={day.key}>
-              {/* Day Label */}
-              <div className="week-plan-day">
-                {day.label}
-              </div>
+          {days.flatMap((day) => [
+            /* Day Label */
+            <div key={`${day.key}-label`} className="week-plan-day">
+              {day.label}
+            </div>,
 
-              {/* Meal Columns for this day */}
-              {mealTimes.map((mealTime) => {
+            /* Meal Columns for this day */
+            ...mealTimes.map((mealTime) => {
                 const assignedMeal = weekPlan.slots[day.key]?.[mealTime.key];
 
                 return (
@@ -348,9 +347,8 @@ export default function WeekPlanGrid({
                     </Select>
                   </div>
                 );
-              })}
-            </React.Fragment>
-          ))}
+              })
+          ])}
         </div>
       </div>
     </div>
