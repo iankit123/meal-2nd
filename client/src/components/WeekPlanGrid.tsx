@@ -119,10 +119,10 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
       {/* Week Plan Grid */}
       <div className="cute-card overflow-hidden w-full">
         {/* Header Row */}
-        <div className="grid gap-2 mb-4" style={{ gridTemplateColumns: '100px repeat(3, 1fr)' }}>
-          <div className="week-plan-header">Day</div>
+        <div className="grid gap-2 mb-4" style={{ gridTemplateColumns: '80px repeat(3, 1fr)' }}>
+          <div className="week-plan-header flex items-center justify-center">Day</div>
           {mealTimes.map((mealTime) => (
-            <div key={mealTime.key} className="week-plan-header">
+            <div key={mealTime.key} className="week-plan-header flex items-center justify-center">
               {mealTime.label}
             </div>
           ))}
@@ -130,9 +130,9 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
 
         {/* Day Rows */}
         {days.map((day) => (
-          <div key={day.key} className="grid gap-2 mb-3" style={{ gridTemplateColumns: '100px repeat(3, 1fr)' }}>
+          <div key={day.key} className="grid gap-2 mb-3" style={{ gridTemplateColumns: '80px repeat(3, 1fr)' }}>
             {/* Day Label */}
-            <div className="week-plan-day">
+            <div className="week-plan-day flex items-center justify-center">
               {day.label}
             </div>
 
@@ -141,7 +141,11 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
               const assignedMeal = weekPlan.slots[day.key]?.[mealTime.key];
 
               return (
-                <div key={mealTime.key} className="week-plan-meal-slot">
+                <div key={mealTime.key} className="flex items-center justify-center"
+                  style={{ 
+                    minHeight: '60px'
+                  }}
+                >
                   <Select
                     value={assignedMeal || "none"}
                     onValueChange={(value) => {
@@ -149,19 +153,18 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
                     }}
                   >
                     <SelectTrigger 
-                      className="w-full rounded-2xl text-xs font-medium min-h-12 px-2 py-1 pr-6 relative [&>svg]:hidden hover:shadow-md transition-shadow"
+                      className="w-full h-full rounded-2xl text-xs font-medium px-3 py-2 bg-white border-2 hover:shadow-md transition-shadow flex items-center justify-center text-center"
                       style={{ 
-                        backgroundColor: mealTime.colorVar,
                         border: '2px solid var(--theme-200)',
-                        color: 'var(--theme-900)'
+                        color: 'var(--theme-900)',
+                        minHeight: '56px'
                       }}
                     >
                       <SelectValue asChild>
-                        <div className="text-left leading-tight whitespace-normal break-words overflow-hidden flex-1">
+                        <div className="text-center leading-tight whitespace-normal break-words overflow-hidden flex-1 flex items-center justify-center">
                           {assignedMeal || "Add meal"}
                         </div>
                       </SelectValue>
-                      <ChevronDown className="h-3 w-3 absolute bottom-1 right-1" style={{ color: 'var(--theme-600)' }} />
                     </SelectTrigger>
                     
                     <SelectContent className="max-h-60 rounded-2xl" style={{ border: '2px solid var(--theme-200)' }}>

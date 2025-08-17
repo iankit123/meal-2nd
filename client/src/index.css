@@ -149,16 +149,21 @@
 .week-plan-day {
   background-color: var(--theme-200);
   color: var(--theme-900);
-  @apply font-bold rounded-2xl p-3 text-center shadow-md;
-}
-
-.week-plan-meal-slot {
-  @apply bg-white rounded-2xl p-3 shadow-md hover:shadow-lg transition-shadow;
-  border: 2px solid var(--theme-100);
+  @apply font-bold rounded-2xl shadow-md;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .week-plan-header {
   background-color: var(--theme-300);
   color: var(--theme-900);
-  @apply font-bold rounded-2xl p-2 text-center shadow-md;
+  @apply font-bold rounded-2xl shadow-md;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
