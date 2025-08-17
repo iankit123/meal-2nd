@@ -52,10 +52,10 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
     { key: 'saturday', label: 'Sat' },
   ];
 
-  const mealTimes: Array<{ key: keyof WeekPlanSlot; label: string; color: string }> = [
-    { key: 'breakfast', label: 'Breakfast', color: 'bg-pink-100' },
-    { key: 'lunch', label: 'Lunch', color: 'bg-pink-200' },
-    { key: 'dinner', label: 'Dinner', color: 'bg-pink-300' },
+  const mealTimes: Array<{ key: keyof WeekPlanSlot; label: string; colorVar: string }> = [
+    { key: 'breakfast', label: 'Breakfast', colorVar: 'var(--theme-100)' },
+    { key: 'lunch', label: 'Lunch', colorVar: 'var(--theme-200)' },
+    { key: 'dinner', label: 'Dinner', colorVar: 'var(--theme-300)' },
   ];
 
   const addNewMeal = () => {
@@ -106,7 +106,7 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
     <div className="space-y-6 max-w-full overflow-x-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-handwritten font-bold text-pink-900 transform -rotate-1">Weekly Meal Plan</h1>
+        <h1 className="text-2xl font-handwritten font-bold transform -rotate-1" style={{ color: 'var(--theme-900)' }}>Weekly Meal Plan</h1>
         <Button 
           onClick={handleSaveChanges}
           className="cute-button"
@@ -119,7 +119,7 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
       {/* Week Plan Grid */}
       <div className="cute-card overflow-hidden w-full">
         {/* Header Row */}
-        <div className="grid grid-cols-[80px_1fr_1fr_1fr] gap-2 mb-4">
+        <div className="grid gap-2 mb-4" style={{ gridTemplateColumns: '100px repeat(3, 1fr)' }}>
           <div className="week-plan-header">Day</div>
           {mealTimes.map((mealTime) => (
             <div key={mealTime.key} className="week-plan-header">
@@ -130,7 +130,7 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
 
         {/* Day Rows */}
         {days.map((day) => (
-          <div key={day.key} className="grid grid-cols-[80px_1fr_1fr_1fr] gap-2 mb-3">
+          <div key={day.key} className="grid gap-2 mb-3" style={{ gridTemplateColumns: '100px repeat(3, 1fr)' }}>
             {/* Day Label */}
             <div className="week-plan-day">
               {day.label}
@@ -148,39 +148,59 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
                       handleMealChange(day.key, mealTime.key, value === "none" ? null : value);
                     }}
                   >
-                    <SelectTrigger className={`w-full ${mealTime.color} border-2 border-pink-200 rounded-2xl text-xs font-medium text-pink-900 min-h-12 px-2 py-1 pr-6 relative [&>svg]:hidden hover:shadow-md transition-shadow`}>
+                    <SelectTrigger 
+                      className="w-full rounded-2xl text-xs font-medium min-h-12 px-2 py-1 pr-6 relative [&>svg]:hidden hover:shadow-md transition-shadow"
+                      style={{ 
+                        backgroundColor: mealTime.colorVar,
+                        border: '2px solid var(--theme-200)',
+                        color: 'var(--theme-900)'
+                      }}
+                    >
                       <SelectValue asChild>
                         <div className="text-left leading-tight whitespace-normal break-words overflow-hidden flex-1">
                           {assignedMeal || "Add meal"}
                         </div>
                       </SelectValue>
-                      <ChevronDown className="h-3 w-3 text-pink-600 absolute bottom-1 right-1" />
+                      <ChevronDown className="h-3 w-3 absolute bottom-1 right-1" style={{ color: 'var(--theme-600)' }} />
                     </SelectTrigger>
                     
-                    <SelectContent className="max-h-60 rounded-2xl border-2 border-pink-200">
-                      <div className="px-2 py-1 text-sm text-pink-700 border-b bg-pink-50 rounded-t-2xl">
+                    <SelectContent className="max-h-60 rounded-2xl" style={{ border: '2px solid var(--theme-200)' }}>
+                      <div className="px-2 py-1 text-sm border-b rounded-t-2xl" style={{ 
+                        color: 'var(--theme-700)', 
+                        backgroundColor: 'var(--theme-50)' 
+                      }}>
                         Select a meal...
                       </div>
                       {mealList.map((meal) => (
-                        <SelectItem key={meal} value={meal} className="text-sm hover:bg-pink-50 rounded-xl mx-1">
+                        <SelectItem key={meal} value={meal} className="text-sm rounded-xl mx-1 hover:shadow-sm"
+                          style={{ 
+                            '--hover-bg': 'var(--theme-50)'
+                          } as React.CSSProperties}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--theme-50)'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        >
                           <div className="flex items-center gap-2 w-full">
-                            {assignedMeal === meal && <Check className="h-4 w-4 text-pink-600" />}
+                            {assignedMeal === meal && <Check className="h-4 w-4" style={{ color: 'var(--theme-600)' }} />}
                             {assignedMeal !== meal && <div className="w-4" />}
-                            <span className="text-pink-900">{meal}</span>
+                            <span style={{ color: 'var(--theme-900)' }}>{meal}</span>
                           </div>
                         </SelectItem>
                       ))}
                       
                       <Dialog open={showAddMeal} onOpenChange={setShowAddMeal}>
                         <DialogTrigger asChild>
-                          <div className="flex items-center gap-2 px-2 py-2 text-sm text-pink-600 hover:bg-pink-50 cursor-pointer border-t rounded-b-2xl">
+                          <div className="flex items-center gap-2 px-2 py-2 text-sm cursor-pointer border-t rounded-b-2xl transition-colors"
+                            style={{ color: 'var(--theme-600)' }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--theme-50)'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                          >
                             <Plus className="h-4 w-4" />
                             <span>Add New Meal</span>
                           </div>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-md cute-card border-4 border-pink-300">
+                        <DialogContent className="sm:max-w-md cute-card" style={{ border: '4px solid var(--theme-300)' }}>
                           <DialogHeader>
-                            <DialogTitle className="font-handwritten text-xl text-pink-900">Add New Meal</DialogTitle>
+                            <DialogTitle className="font-handwritten text-xl" style={{ color: 'var(--theme-900)' }}>Add New Meal</DialogTitle>
                           </DialogHeader>
                           <div className="space-y-4">
                             <Input
@@ -204,7 +224,13 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
                                   setShowAddMeal(false);
                                   setNewMealName("");
                                 }}
-                                className="rounded-2xl border-2 border-pink-200 text-pink-700 hover:bg-pink-50"
+                                className="rounded-2xl font-medium transition-colors hover:shadow-sm"
+                                style={{ 
+                                  border: '2px solid var(--theme-200)', 
+                                  color: 'var(--theme-700)' 
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--theme-50)'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                               >
                                 Cancel
                               </Button>

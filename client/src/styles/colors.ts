@@ -1,0 +1,92 @@
+// Central color configuration for the app
+// Change the PRIMARY_COLOR to switch the entire app's color scheme
+
+export const COLORS = {
+  // Primary color - change this to update the entire app's theme
+  PRIMARY_COLOR: 'blue', // Options: 'pink', 'purple', 'blue', 'green', 'orange', 'indigo'
+  
+  // Color mappings based on primary color
+  getColors: () => {
+    const primary = COLORS.PRIMARY_COLOR;
+    
+    const colorMaps = {
+      pink: {
+        50: 'hsl(335, 50%, 97%)',
+        100: 'hsl(335, 45%, 92%)',
+        200: 'hsl(335, 40%, 85%)',
+        300: 'hsl(329, 48%, 84%)',
+        400: 'hsl(329, 50%, 75%)',
+        500: 'hsl(329, 55%, 65%)',
+        600: 'hsl(329, 60%, 55%)',
+        700: 'hsl(329, 65%, 45%)',
+        800: 'hsl(329, 70%, 35%)',
+        900: 'hsl(329, 75%, 25%)',
+      },
+      blue: {
+        50: 'hsl(210, 50%, 97%)',
+        100: 'hsl(210, 45%, 92%)',
+        200: 'hsl(210, 40%, 85%)',
+        300: 'hsl(210, 48%, 84%)',
+        400: 'hsl(210, 50%, 75%)',
+        500: 'hsl(210, 55%, 65%)',
+        600: 'hsl(210, 60%, 55%)',
+        700: 'hsl(210, 65%, 45%)',
+        800: 'hsl(210, 70%, 35%)',
+        900: 'hsl(210, 75%, 25%)',
+      },
+      purple: {
+        50: 'hsl(270, 50%, 97%)',
+        100: 'hsl(270, 45%, 92%)',
+        200: 'hsl(270, 40%, 85%)',
+        300: 'hsl(270, 48%, 84%)',
+        400: 'hsl(270, 50%, 75%)',
+        500: 'hsl(270, 55%, 65%)',
+        600: 'hsl(270, 60%, 55%)',
+        700: 'hsl(270, 65%, 45%)',
+        800: 'hsl(270, 70%, 35%)',
+        900: 'hsl(270, 75%, 25%)',
+      },
+      green: {
+        50: 'hsl(120, 50%, 97%)',
+        100: 'hsl(120, 45%, 92%)',
+        200: 'hsl(120, 40%, 85%)',
+        300: 'hsl(120, 48%, 84%)',
+        400: 'hsl(120, 50%, 75%)',
+        500: 'hsl(120, 55%, 65%)',
+        600: 'hsl(120, 60%, 55%)',
+        700: 'hsl(120, 65%, 45%)',
+        800: 'hsl(120, 70%, 35%)',
+        900: 'hsl(120, 75%, 25%)',
+      },
+      orange: {
+        50: 'hsl(30, 50%, 97%)',
+        100: 'hsl(30, 45%, 92%)',
+        200: 'hsl(30, 40%, 85%)',
+        300: 'hsl(30, 48%, 84%)',
+        400: 'hsl(30, 50%, 75%)',
+        500: 'hsl(30, 55%, 65%)',
+        600: 'hsl(30, 60%, 55%)',
+        700: 'hsl(30, 65%, 45%)',
+        800: 'hsl(30, 70%, 35%)',
+        900: 'hsl(30, 75%, 25%)',
+      },
+      indigo: {
+        50: 'hsl(230, 50%, 97%)',
+        100: 'hsl(230, 45%, 92%)',
+        200: 'hsl(230, 40%, 85%)',
+        300: 'hsl(230, 48%, 84%)',
+        400: 'hsl(230, 50%, 75%)',
+        500: 'hsl(230, 55%, 65%)',
+        600: 'hsl(230, 60%, 55%)',
+        700: 'hsl(230, 65%, 45%)',
+        800: 'hsl(230, 70%, 35%)',
+        900: 'hsl(230, 75%, 25%)',
+      },
+    };
+
+    return colorMaps[primary as keyof typeof colorMaps] || colorMaps.blue;
+  }
+};
+
+// Export individual color values for easy use
+export const THEME_COLORS = COLORS.getColors();

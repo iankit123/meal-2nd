@@ -17,7 +17,7 @@ export default function SearchBar({ value, onChange, placeholder = "Search meals
         onChange={(e) => onChange(e.target.value)}
         className="cute-input w-full pl-10 pr-4 py-3 text-sm font-medium"
       />
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-pink-500 w-4 h-4" />
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: 'var(--theme-500)' }} />
     </div>
   );
 }

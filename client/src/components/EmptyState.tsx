@@ -23,14 +23,14 @@ export default function EmptyState({ title, description, action, icon }: EmptySt
               alt="Cute cat mascot" 
               className="w-24 h-24 mx-auto mb-2 rounded-2xl shadow-lg"
             />
-            <div className="text-3xl font-handwritten text-pink-700 transform -rotate-2">
+            <div className="text-3xl font-handwritten transform -rotate-2" style={{ color: 'var(--theme-700)' }}>
               A great ♥ way to organise your day
             </div>
           </div>
         )}
       </div>
-      <h3 className="text-xl font-handwritten font-bold text-pink-900 mb-3 transform rotate-1">{title}</h3>
-      <p className="text-pink-600 mb-8 font-medium">{description}</p>
+      <h3 className="text-xl font-handwritten font-bold mb-3 transform rotate-1" style={{ color: 'var(--theme-900)' }}>{title}</h3>
+      <p className="mb-8 font-medium" style={{ color: 'var(--theme-600)' }}>{description}</p>
       {action && (
         <Button
           onClick={action.onClick}

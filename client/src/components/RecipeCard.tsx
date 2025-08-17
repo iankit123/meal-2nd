@@ -17,13 +17,13 @@ export default function RecipeCard({ recipe, onBookmarkToggle }: RecipeCardProps
   const getMealTypeColor = (mealType: Recipe['mealType']) => {
     switch (mealType) {
       case 'breakfast':
-        return 'bg-pink-100 text-pink-800';
+        return { backgroundColor: 'var(--theme-100)', color: 'var(--theme-800)' };
       case 'lunchDinner':
-        return 'bg-pink-200 text-pink-900';
+        return { backgroundColor: 'var(--theme-200)', color: 'var(--theme-900)' };
       case 'snack':
-        return 'bg-pink-300 text-pink-900';
+        return { backgroundColor: 'var(--theme-300)', color: 'var(--theme-900)' };
       default:
-        return 'bg-pink-100 text-pink-800';
+        return { backgroundColor: 'var(--theme-100)', color: 'var(--theme-800)' };
     }
   };
 
@@ -47,8 +47,8 @@ export default function RecipeCard({ recipe, onBookmarkToggle }: RecipeCardProps
             className="w-full h-48 object-cover"
           />
         ) : (
-          <div className="w-full h-48 bg-pink-100 flex items-center justify-center">
-            <span className="text-pink-400 font-handwritten text-xl">No image</span>
+          <div className="w-full h-48 flex items-center justify-center" style={{ backgroundColor: 'var(--theme-100)' }}>
+            <span className="font-handwritten text-xl" style={{ color: 'var(--theme-400)' }}>No image</span>
           </div>
         )}
       </div>
@@ -58,10 +58,13 @@ export default function RecipeCard({ recipe, onBookmarkToggle }: RecipeCardProps
         {/* Recipe Title and Category */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
-            <h3 className="font-handwritten font-bold text-pink-900 text-xl mb-2 transform -rotate-1">
+            <h3 className="font-handwritten font-bold text-xl mb-2 transform -rotate-1" style={{ color: 'var(--theme-900)' }}>
               {recipe.title}
             </h3>
-            <span className={`inline-block text-xs font-bold px-3 py-1.5 rounded-2xl shadow-sm ${getMealTypeColor(recipe.mealType)}`}>
+            <span 
+              className="inline-block text-xs font-bold px-3 py-1.5 rounded-2xl shadow-sm"
+              style={getMealTypeColor(recipe.mealType)}
+            >
               {getMealTypeLabel(recipe.mealType)}
             </span>
           </div>
@@ -71,14 +74,27 @@ export default function RecipeCard({ recipe, onBookmarkToggle }: RecipeCardProps
             variant="ghost"
             size="sm"
             onClick={() => onBookmarkToggle(recipe.id)}
-            className="p-2 hover:bg-pink-50 rounded-2xl transition-all duration-200 transform hover:scale-110"
+            className="p-2 rounded-2xl transition-all duration-200 transform hover:scale-110"
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--theme-50)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             <Heart 
-              className={`w-6 h-6 transition-all duration-200 ${
-                isBookmarked 
-                  ? "fill-pink-500 text-pink-500 animate-pulse" 
-                  : "text-pink-400 hover:text-pink-500 hover:scale-110"
-              }`}
+              className="w-6 h-6 transition-all duration-200 hover:scale-110"
+              style={{
+                fill: isBookmarked ? 'var(--theme-500)' : 'transparent',
+                color: isBookmarked ? 'var(--theme-500)' : 'var(--theme-400)',
+                animation: isBookmarked ? 'pulse 2s infinite' : 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (!isBookmarked) {
+                  e.currentTarget.style.color = 'var(--theme-500)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isBookmarked) {
+                  e.currentTarget.style.color = 'var(--theme-400)';
+                }
+              }}
             />
           </Button>
         </div>
