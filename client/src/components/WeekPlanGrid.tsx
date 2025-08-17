@@ -53,7 +53,7 @@ export default function WeekPlanGrid({
     "Palak paneer",
     "Kadhi",
     "Kakdi Sabzi",
-  ]);
+  ].sort());
   const [newMealName, setNewMealName] = useState("");
   const [showAddMeal, setShowAddMeal] = useState(false);
 

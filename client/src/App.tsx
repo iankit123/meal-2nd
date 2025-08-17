@@ -3,10 +3,11 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import { useTheme } from "./hooks/useTheme";
 
 import Header from "./components/Header";
+import UsernameAuth from "./components/UsernameAuth";
 import AllMeals from "./pages/AllMeals";
 import Bookmarks from "./pages/Bookmarks";
 import RecipeDetails from "./pages/RecipeDetails";
@@ -18,6 +19,27 @@ import NotFound from "./pages/not-found";
 function Router() {
   // Apply theme colors dynamically from colors.ts
   useTheme();
+  
+  const { isAuthenticated, loading } = useAuth();
+  
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{
+        background: 'linear-gradient(135deg, var(--theme-50) 0%, var(--theme-100) 100%)'
+      }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto mb-4" style={{ borderColor: 'var(--theme-600)' }}></div>
+          <p style={{ color: 'var(--theme-700)' }}>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show username auth if not authenticated
+  if (!isAuthenticated) {
+    return <UsernameAuth />;
+  }
   
   return (
     <div className="min-h-screen bg-background">
