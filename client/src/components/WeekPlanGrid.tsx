@@ -118,34 +118,36 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
 
       {/* Week Plan Grid */}
       <div className="cute-card overflow-hidden w-full">
-        {/* Header Row */}
-        <div className="grid gap-2 mb-4" style={{ gridTemplateColumns: '80px repeat(3, 1fr)' }}>
-          <div className="week-plan-header flex items-center justify-center">Day</div>
+        {/* Strict Grid Container with Fixed Columns */}
+        <div 
+          className="grid gap-2" 
+          style={{ 
+            gridTemplateColumns: '80px repeat(3, 1fr)',
+            gridTemplateRows: 'auto'
+          }}
+        >
+          {/* Header Row */}
+          <div className="week-plan-header">Day</div>
           {mealTimes.map((mealTime) => (
-            <div key={mealTime.key} className="week-plan-header flex items-center justify-center">
+            <div key={mealTime.key} className="week-plan-header">
               {mealTime.label}
             </div>
           ))}
-        </div>
 
-        {/* Day Rows */}
-        {days.map((day) => (
-          <div key={day.key} className="grid gap-2 mb-3" style={{ gridTemplateColumns: '80px repeat(3, 1fr)' }}>
-            {/* Day Label */}
-            <div className="week-plan-day flex items-center justify-center">
-              {day.label}
-            </div>
+          {/* All Grid Cells */}
+          {days.map((day) => (
+            <>
+              {/* Day Label */}
+              <div key={`${day.key}-label`} className="week-plan-day">
+                {day.label}
+              </div>
 
-            {/* Meal Columns */}
-            {mealTimes.map((mealTime) => {
-              const assignedMeal = weekPlan.slots[day.key]?.[mealTime.key];
+              {/* Meal Columns for this day */}
+              {mealTimes.map((mealTime) => {
+                const assignedMeal = weekPlan.slots[day.key]?.[mealTime.key];
 
-              return (
-                <div key={mealTime.key} className="flex items-center justify-center"
-                  style={{ 
-                    minHeight: '60px'
-                  }}
-                >
+                return (
+                  <div key={`${day.key}-${mealTime.key}`} className="week-plan-cell">
                   <Select
                     value={assignedMeal || "none"}
                     onValueChange={(value) => {
@@ -153,15 +155,23 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
                     }}
                   >
                     <SelectTrigger 
-                      className="w-full h-full rounded-2xl text-xs font-medium px-3 py-2 bg-white border-2 hover:shadow-md transition-shadow flex items-center justify-center text-center"
+                      className="w-full h-full rounded-2xl text-xs font-medium px-3 py-2 bg-white border-2 hover:shadow-md transition-shadow"
                       style={{ 
                         border: '2px solid var(--theme-200)',
                         color: 'var(--theme-900)',
-                        minHeight: '56px'
+                        minHeight: '56px',
+                        maxWidth: '100%',
+                        overflow: 'hidden'
                       }}
                     >
                       <SelectValue asChild>
-                        <div className="text-center leading-tight whitespace-normal break-words overflow-hidden flex-1 flex items-center justify-center">
+                        <div className="text-center leading-tight break-words overflow-hidden w-full flex items-center justify-center" style={{ 
+                          wordWrap: 'break-word',
+                          overflowWrap: 'break-word',
+                          hyphens: 'auto',
+                          whiteSpace: 'normal',
+                          lineHeight: '1.2'
+                        }}>
                           {assignedMeal || "Add meal"}
                         </div>
                       </SelectValue>
@@ -243,11 +253,12 @@ export default function WeekPlanGrid({ weekPlan, onUpdate }: WeekPlanGridProps) 
                       </Dialog>
                     </SelectContent>
                   </Select>
-                </div>
-              );
-            })}
-          </div>
-        ))}
+                  </div>
+                );
+              })}
+            </>
+          ))}
+        </div>
       </div>
     </div>
   );
