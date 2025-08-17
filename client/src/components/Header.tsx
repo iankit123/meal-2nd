@@ -1,10 +1,27 @@
 import { Link, useLocation } from "wouter";
-import { Utensils, Calendar, Bookmark, Star } from "lucide-react";
+import { Utensils, Calendar, Bookmark, Star, LogOut, TestTube } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "../context/AuthContext";
+import { runUsernameTests } from "../utils/testUsername";
 import catMascotImage from "@assets/generated_images/Cute_cat_food_mascot_23ee73be.png";
 
 export default function Header() {
   const [location] = useLocation();
+  const { username, logout } = useAuth();
+
+  const handleRunTests = async () => {
+    console.log('🧪 Running Username System Tests...');
+    try {
+      const results = await runUsernameTests();
+      console.log('📊 Test Results:', results);
+      console.log('Firebase Test:', results.firebaseTest ? '✅ PASS' : '❌ FAIL');
+      console.log('LocalStorage Test:', results.localStorageTest ? '✅ PASS' : '❌ FAIL');
+      alert(`Test Results:\nFirebase Test: ${results.firebaseTest ? 'PASS' : 'FAIL'}\nLocalStorage Test: ${results.localStorageTest ? 'PASS' : 'FAIL'}\n\nCheck console for detailed logs.`);
+    } catch (error) {
+      console.error('❌ Test execution failed:', error);
+      alert('Test execution failed. Check console for details.');
+    }
+  };
 
   const navItems = [
     {
@@ -82,17 +99,37 @@ export default function Header() {
             </h1>
           </Link>
 
-          {/* Right Cat Mascot */}
-          <div className="transform rotate-6">
-            <img
-              src={catMascotImage}
-              alt="Cute cat mascot"
-              className={`rounded-2xl shadow-lg ${location === "/" ? "w-16 h-16" : "w-12 h-12"}`}
-              style={{
-                border: "3px solid var(--theme-200)",
-                background: "white",
-              }}
-            />
+          {/* Right Controls and Cat Mascot */}
+          <div className="flex items-center space-x-2">
+            <Button
+              onClick={handleRunTests}
+              variant="ghost"
+              size="sm"
+              className="p-2 rounded-full hover:bg-white/20 transition-colors"
+              title="Run Tests"
+            >
+              <TestTube className="w-4 h-4" style={{ color: "var(--theme-600)" }} />
+            </Button>
+            <Button
+              onClick={logout}
+              variant="ghost"
+              size="sm"
+              className="p-2 rounded-full hover:bg-white/20 transition-colors"
+              title={`Logout ${username}`}
+            >
+              <LogOut className="w-4 h-4" style={{ color: "var(--theme-600)" }} />
+            </Button>
+            <div className="transform rotate-6">
+              <img
+                src={catMascotImage}
+                alt="Cute cat mascot"
+                className={`rounded-2xl shadow-lg ${location === "/" ? "w-16 h-16" : "w-12 h-12"}`}
+                style={{
+                  border: "3px solid var(--theme-200)",
+                  background: "white",
+                }}
+              />
+            </div>
           </div>
         </div>
 

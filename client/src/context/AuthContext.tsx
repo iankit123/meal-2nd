@@ -13,6 +13,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   createUser: (username: string) => Promise<void>;
   loginUser: (username: string) => Promise<void>;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -24,6 +25,7 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   createUser: async () => {},
   loginUser: async () => {},
+  logout: () => {},
 });
 
 export const useAuth = () => {
@@ -193,6 +195,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, []);
 
+  const logout = () => {
+    setUsername(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem('mealplanner-username');
+    console.log('User logged out');
+  };
+
   const value = {
     user,
     loading,
@@ -202,6 +211,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isAuthenticated,
     createUser,
     loginUser,
+    logout,
   };
 
   return (
