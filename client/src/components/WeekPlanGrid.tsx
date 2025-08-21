@@ -15,9 +15,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, Check, Plus } from "lucide-react";
+import { ChevronDown, Plus } from "lucide-react";
 import { WeekPlan, WeekPlanSlot } from "../types/recipe";
-import { saveWeekPlanData } from "../lib/storage";
+import {
+  getWeekPlanData, // if you use it elsewhere
+  saveWeekPlanData,
+  loadMealList,
+  saveMealList,
+} from "../lib/storage";
 import { useToast } from "@/hooks/use-toast";
 
 interface WeekPlanGridProps {
@@ -33,31 +38,36 @@ export default function WeekPlanGrid({
   const [localWeekPlan, setLocalWeekPlan] = useState<WeekPlan>(weekPlan);
   const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [mealList, setMealList] = useState<string[]>(
-    [
-      "Appe",
-      "Guacamole toast",
-      "Moong daal chila",
-      "Poha",
-      "Sabodana",
-      "Upma",
-      "Veg paneer / sandwich",
-      "Vermicelli",
-      "Pasta",
-      "Daal Baati",
-      "Bengan bharta",
-      "Dal Rice",
-      "Ghiya Sabji",
-      "Dal roti",
-      "Paneer capsicum",
-      "Paneer sabzi",
-      "Black chane",
-      "Mix veg rice",
-      "Palak paneer",
-      "Kadhi",
-      "Kakdi Sabzi",
-    ].sort(),
-  );
+
+  // case-insensitive comparator
+  const byName = (a: string, b: string) =>
+    a.localeCompare(b, undefined, { sensitivity: "base" });
+
+  const DEFAULT_MEALS = [
+    "Appe",
+    "Guacamole toast",
+    "Moong daal chila",
+    "Poha",
+    "Sabodana",
+    "Upma",
+    "Veg paneer / sandwich",
+    "Vermicelli",
+    "Pasta",
+    "Daal Baati",
+    "Bengan bharta",
+    "Dal Rice",
+    "Ghiya Sabji",
+    "Dal roti",
+    "Paneer capsicum",
+    "Paneer sabzi",
+    "Black chane",
+    "Mix veg rice",
+    "Palak paneer",
+    "Kadhi",
+    "Kakdi Sabzi",
+  ].sort(byName);
+
+  const [mealList, setMealList] = useState<string[]>(DEFAULT_MEALS);
   const [newMealName, setNewMealName] = useState("");
   const [showAddMeal, setShowAddMeal] = useState(false);
 
@@ -81,19 +91,28 @@ export default function WeekPlanGrid({
     { key: "dinner", label: "Dinner", colorVar: "var(--theme-300)" },
   ];
 
-  const addNewMeal = () => {
-    if (newMealName.trim() && !mealList.includes(newMealName.trim())) {
-      setMealList([...mealList, newMealName.trim()]);
-      setNewMealName("");
-      setShowAddMeal(false);
-      toast({
-        title: "Success",
-        description: "New meal added to list",
-      });
-    }
-  };
+  // Merge remote meal list with defaults on mount
+  React.useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const remote = await loadMealList(); // [] if none
+        if (!mounted) return;
+        const map = new Map<string, string>();
+        for (const m of [...DEFAULT_MEALS, ...remote]) {
+          map.set(m.toLowerCase(), m);
+        }
+        setMealList(Array.from(map.values()).sort(byName));
+      } catch (e) {
+        console.warn("loadMealList failed:", e);
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Update local state when weekPlan prop changes
+  // Sync local state when weekPlan prop changes
   React.useEffect(() => {
     setLocalWeekPlan(weekPlan);
     setHasChanges(false);
@@ -104,9 +123,6 @@ export default function WeekPlanGrid({
     meal: keyof WeekPlanSlot,
     mealName: string | null,
   ) => {
-    console.log(`Locally updating ${day} ${meal} to:`, mealName);
-
-    // Update local state immediately (no server call)
     const updatedSlots = {
       ...localWeekPlan.slots,
       [day]: {
@@ -131,22 +147,15 @@ export default function WeekPlanGrid({
 
   const handleSaveChanges = async () => {
     if (!hasChanges) return;
-
     setIsSaving(true);
     try {
-      console.log("Saving meal plan changes to server...");
       await saveWeekPlanData(localWeekPlan.slots);
-
-      // Trigger refetch to sync with server
       onUpdate();
       setHasChanges(false);
-
       toast({
         title: "Success",
         description: "Meal plan saved successfully!",
       });
-
-      console.log("Meal plan saved successfully");
     } catch (error) {
       console.error("Failed to save meal plan:", error);
       toast({
@@ -156,6 +165,37 @@ export default function WeekPlanGrid({
       });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const addNewMeal = async () => {
+    const name = newMealName.trim();
+    if (!name) return;
+
+    // prevent duplicates (case-insensitive)
+    if (mealList.some((m) => m.toLowerCase() === name.toLowerCase())) {
+      toast({
+        title: "Already exists",
+        description: `"${name}" is already in the list.`,
+      });
+      return;
+    }
+
+    const next = [...mealList, name].sort(byName);
+    setMealList(next);
+    setNewMealName("");
+    setShowAddMeal(false);
+
+    try {
+      await saveMealList(next); // persist to Firebase
+      toast({ title: "Success", description: "New meal added to list" });
+    } catch (e) {
+      console.error("saveMealList failed:", e);
+      toast({
+        title: "Error",
+        description: "Couldn't save meal list to cloud",
+        variant: "destructive",
+      });
     }
   };
 
@@ -190,9 +230,9 @@ export default function WeekPlanGrid({
           {isSaving ? "Saving..." : "Save Changes"}
         </Button>
       </div>
+
       {/* Week Plan Grid */}
-      <div className="cute-card overflow-hidden w-full p-0 pl-[6px] pr-[6px]">
-        {/* Strict Grid Container with Fixed Columns */}
+      <div className="cute-card overflow-hidden w-full p-0">
         <div
           className="grid gap-2"
           style={{
@@ -210,12 +250,10 @@ export default function WeekPlanGrid({
 
           {/* All Grid Cells */}
           {days.flatMap((day) => [
-            /* Day Label */
             <div key={`${day.key}-label`} className="week-plan-day">
               {day.label}
             </div>,
 
-            /* Meal Columns for this day */
             ...mealTimes.map((mealTime) => {
               const assignedMeal = localWeekPlan.slots[day.key]?.[mealTime.key];
 
@@ -226,13 +264,13 @@ export default function WeekPlanGrid({
                 >
                   <Select
                     value={assignedMeal || "none"}
-                    onValueChange={(value) => {
+                    onValueChange={(value) =>
                       handleMealChange(
                         day.key,
                         mealTime.key,
                         value === "none" ? null : value,
-                      );
-                    }}
+                      )
+                    }
                   >
                     <SelectTrigger
                       className="w-full h-full rounded-2xl text-xs font-medium px-3 py-2 bg-white border-2 hover:shadow-md transition-shadow relative [&>svg]:hidden pl-[3px] pr-[3px]"
@@ -253,14 +291,13 @@ export default function WeekPlanGrid({
                             hyphens: "auto",
                             whiteSpace: "normal",
                             lineHeight: "1.2",
-                            color: assignedMeal ? "var(--theme-900)" : "red", // 👈 highlight empty
-                            fontWeight: assignedMeal ? "normal" : "600", // optional: bold when empty
+                            color: assignedMeal ? "var(--theme-900)" : "red", // <-- red when empty
+                            fontWeight: assignedMeal ? "normal" : "600",
                           }}
                         >
                           {assignedMeal || "Add meal"}
                         </div>
                       </SelectValue>
-
                       <ChevronDown
                         className="h-3 w-3 absolute bottom-1 right-1 pointer-events-none"
                         style={{ color: "var(--theme-600)" }}
@@ -280,6 +317,7 @@ export default function WeekPlanGrid({
                       >
                         Select a meal...
                       </div>
+
                       {mealList.map((meal) => (
                         <SelectItem
                           key={meal}
@@ -299,14 +337,7 @@ export default function WeekPlanGrid({
                               "transparent")
                           }
                         >
-                          <div className="flex items-left gap-2 w-full">
-                            {/* {assignedMeal === meal && (
-                                <Check
-                                  className="h-4 w-4"
-                                  style={{ color: "var(--theme-600)" }}
-                                />
-                              )} */}
-                            {assignedMeal !== meal && <div className="w-4" />}
+                          <div className="flex items-center gap-2 w-full">
                             <span style={{ color: "var(--theme-900)" }}>
                               {meal}
                             </span>
@@ -314,10 +345,11 @@ export default function WeekPlanGrid({
                         </SelectItem>
                       ))}
 
+                      {/* Add new meal option */}
                       <Dialog open={showAddMeal} onOpenChange={setShowAddMeal}>
                         <DialogTrigger asChild>
                           <div
-                            className="flex items-left gap-2 px-2 py-2 text-sm cursor-pointer border-t rounded-b-2xl transition-colors"
+                            className="flex items-center gap-2 px-2 py-2 text-sm cursor-pointer border-t rounded-b-2xl transition-colors"
                             style={{ color: "var(--theme-600)" }}
                             onMouseEnter={(e) =>
                               (e.currentTarget.style.backgroundColor =
@@ -332,6 +364,7 @@ export default function WeekPlanGrid({
                             <span>Add New Meal</span>
                           </div>
                         </DialogTrigger>
+
                         <DialogContent
                           className="sm:max-w-md cute-card"
                           style={{ border: "4px solid var(--theme-300)" }}
@@ -344,15 +377,14 @@ export default function WeekPlanGrid({
                               Add New Meal
                             </DialogTitle>
                           </DialogHeader>
+
                           <div className="space-y-4">
                             <Input
                               placeholder="Enter meal name"
                               value={newMealName}
                               onChange={(e) => setNewMealName(e.target.value)}
                               onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                  addNewMeal();
-                                }
+                                if (e.key === "Enter") addNewMeal();
                               }}
                               className="cute-input"
                             />
@@ -374,14 +406,6 @@ export default function WeekPlanGrid({
                                   border: "2px solid var(--theme-200)",
                                   color: "var(--theme-700)",
                                 }}
-                                onMouseEnter={(e) =>
-                                  (e.currentTarget.style.backgroundColor =
-                                    "var(--theme-50)")
-                                }
-                                onMouseLeave={(e) =>
-                                  (e.currentTarget.style.backgroundColor =
-                                    "transparent")
-                                }
                               >
                                 Cancel
                               </Button>
