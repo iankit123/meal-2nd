@@ -97,6 +97,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         throw new Error('Failed to initialize authentication');
       }
 
+      // Debug: Log auth user details
+      console.log('Auth user for username creation:', {
+        uid: authUser.uid,
+        isAnonymous: authUser.isAnonymous,
+        providerId: authUser.providerId
+      });
+
       // Use Firebase as primary storage (no fallbacks for cross-browser persistence)
       try {
         // Check if username already exists in Firebase
@@ -114,9 +121,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.log('Username stored in Firebase successfully');
       } catch (firebaseError: any) {
         console.error('Firebase error:', firebaseError);
+        console.error('Firebase error code:', firebaseError.code);
+        console.error('Firebase error message:', firebaseError.message);
+        
         if (firebaseError.message?.includes('Username already exists')) {
           throw new Error('Username already exists');
         }
+        
+        if (firebaseError.code === 'permission-denied') {
+          throw new Error('Firebase permissions not configured. Please ensure:\n1. Anonymous Authentication is enabled in Firebase Console\n2. Firestore security rules allow anonymous access\n3. Project is properly configured');
+        }
+        
         throw new Error('Unable to save username. Please check your internet connection and try again.');
       }
 
@@ -154,9 +169,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.log('Username found in Firebase:', existingUsername);
       } catch (firebaseError: any) {
         console.error('Firebase error:', firebaseError);
+        console.error('Firebase error code:', firebaseError.code);
+        
         if (firebaseError.message?.includes('Username not found')) {
           throw new Error('Username not found');
         }
+        
+        if (firebaseError.code === 'permission-denied') {
+          throw new Error('Firebase permissions not configured. Please ensure:\n1. Anonymous Authentication is enabled in Firebase Console\n2. Firestore security rules allow anonymous access');
+        }
+        
         throw new Error('Unable to verify username. Please check your internet connection and try again.');
       }
 

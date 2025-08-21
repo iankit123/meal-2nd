@@ -37,7 +37,7 @@ export const getWeekPlanData = async (): Promise<WeekPlanData | null> => {
       console.log('Week plan data retrieved from Firebase:', data);
       return {
         uid: docSnap.id,
-        ...data,
+        slots: data.slots || {},
         updatedAt: data.updatedAt?.toDate() || new Date(),
       };
     } else {
@@ -90,12 +90,19 @@ export const getRecipesData = async (): Promise<RecipeData[]> => {
     const q = query(collection(db, 'recipes'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
     
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate() || new Date(),
-      updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-    })) as RecipeData[];
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title || '',
+        instructions: data.instructions || '',
+        mealType: data.mealType || '',
+        createdBy: data.createdBy || '',
+        ...data,
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+      };
+    }) as RecipeData[];
   } catch (error) {
     console.error('Firebase error retrieving recipes:', error);
     throw new Error('Unable to retrieve recipes. Please check your internet connection and try again.');
