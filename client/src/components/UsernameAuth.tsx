@@ -54,7 +54,10 @@ export default function UsernameAuth() {
       // Auto-login will happen in the auth context
     } catch (err: any) {
       console.log("Create user error:", err);
-      if (err.message?.includes("already exists") || err.message?.includes("Username already exists")) {
+      if (
+        err.message?.includes("already exists") ||
+        err.message?.includes("Username already exists")
+      ) {
         setError("Username already exists. Please choose a different one.");
       } else {
         setError("Failed to create account. Please try again.");
@@ -114,7 +117,7 @@ export default function UsernameAuth() {
             Welcome to Meal Planner
           </CardTitle>
           <CardDescription style={{ color: "var(--theme-700)" }}>
-            Choose your username to get started with your personal meal planning
+            No Password Required. Just a Username.
           </CardDescription>
         </CardHeader>
 
