@@ -33,29 +33,31 @@ export default function WeekPlanGrid({
   const [localWeekPlan, setLocalWeekPlan] = useState<WeekPlan>(weekPlan);
   const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [mealList, setMealList] = useState<string[]>([
-    "Appe",
-    "Guacamole toast",
-    "Moong daal chila",
-    "Poha",
-    "Sabodana",
-    "Upma",
-    "Veg paneer / sandwich",
-    "Vermicelli",
-    "Pasta",
-    "Daal Baati",
-    "Bengan bharta",
-    "Dal Rice",
-    "Ghiya Sabji",
-    "Dal roti",
-    "Paneer capsicum",
-    "Paneer sabzi",
-    "Black chane",
-    "Mix veg rice",
-    "Palak paneer",
-    "Kadhi",
-    "Kakdi Sabzi",
-  ].sort());
+  const [mealList, setMealList] = useState<string[]>(
+    [
+      "Appe",
+      "Guacamole toast",
+      "Moong daal chila",
+      "Poha",
+      "Sabodana",
+      "Upma",
+      "Veg paneer / sandwich",
+      "Vermicelli",
+      "Pasta",
+      "Daal Baati",
+      "Bengan bharta",
+      "Dal Rice",
+      "Ghiya Sabji",
+      "Dal roti",
+      "Paneer capsicum",
+      "Paneer sabzi",
+      "Black chane",
+      "Mix veg rice",
+      "Palak paneer",
+      "Kadhi",
+      "Kakdi Sabzi",
+    ].sort(),
+  );
   const [newMealName, setNewMealName] = useState("");
   const [showAddMeal, setShowAddMeal] = useState(false);
 
@@ -103,7 +105,7 @@ export default function WeekPlanGrid({
     mealName: string | null,
   ) => {
     console.log(`Locally updating ${day} ${meal} to:`, mealName);
-    
+
     // Update local state immediately (no server call)
     const updatedSlots = {
       ...localWeekPlan.slots,
@@ -129,21 +131,21 @@ export default function WeekPlanGrid({
 
   const handleSaveChanges = async () => {
     if (!hasChanges) return;
-    
+
     setIsSaving(true);
     try {
       console.log("Saving meal plan changes to server...");
       await saveWeekPlanData(localWeekPlan.slots);
-      
+
       // Trigger refetch to sync with server
       onUpdate();
       setHasChanges(false);
-      
+
       toast({
         title: "Success",
         description: "Meal plan saved successfully!",
       });
-      
+
       console.log("Meal plan saved successfully");
     } catch (error) {
       console.error("Failed to save meal plan:", error);
@@ -156,8 +158,6 @@ export default function WeekPlanGrid({
       setIsSaving(false);
     }
   };
-
-
 
   return (
     <div className="space-y-6 max-w-full overflow-x-auto">
@@ -181,7 +181,9 @@ export default function WeekPlanGrid({
           className="cute-button"
           disabled={!hasChanges || isSaving}
           style={{
-            backgroundColor: hasChanges ? "var(--theme-600)" : "var(--theme-300)",
+            backgroundColor: hasChanges
+              ? "var(--theme-600)"
+              : "var(--theme-300)",
             color: "white",
           }}
         >
@@ -189,7 +191,7 @@ export default function WeekPlanGrid({
         </Button>
       </div>
       {/* Week Plan Grid */}
-      <div className="cute-card overflow-hidden w-full pl-[3px] pr-[3px]">
+      <div className="cute-card overflow-hidden w-full pl-[4px] pr-[4px] ml-[0px] mr-[0px] pt-[16px] pb-[16px]">
         {/* Strict Grid Container with Fixed Columns */}
         <div
           className="grid gap-2"
@@ -215,76 +217,105 @@ export default function WeekPlanGrid({
 
             /* Meal Columns for this day */
             ...mealTimes.map((mealTime) => {
-                const assignedMeal = localWeekPlan.slots[day.key]?.[mealTime.key];
+              const assignedMeal = localWeekPlan.slots[day.key]?.[mealTime.key];
 
-                return (
-                  <div
-                    key={`${day.key}-${mealTime.key}`}
-                    className="week-plan-cell"
+              return (
+                <div
+                  key={`${day.key}-${mealTime.key}`}
+                  className="week-plan-cell"
+                >
+                  <Select
+                    value={assignedMeal || "none"}
+                    onValueChange={(value) => {
+                      handleMealChange(
+                        day.key,
+                        mealTime.key,
+                        value === "none" ? null : value,
+                      );
+                    }}
                   >
-                    <Select
-                      value={assignedMeal || "none"}
-                      onValueChange={(value) => {
-                        handleMealChange(
-                          day.key,
-                          mealTime.key,
-                          value === "none" ? null : value,
-                        );
+                    <SelectTrigger
+                      className="w-full h-full rounded-2xl text-xs font-medium px-3 py-2 bg-white border-2 hover:shadow-md transition-shadow relative [&>svg]:hidden pl-[3px] pr-[3px]"
+                      style={{
+                        border: "2px solid var(--theme-200)",
+                        color: "var(--theme-900)",
+                        minHeight: "56px",
+                        maxWidth: "100%",
+                        overflow: "hidden",
                       }}
                     >
-                      <SelectTrigger
-                        className="w-full h-full rounded-2xl text-xs font-medium px-3 py-2 bg-white border-2 hover:shadow-md transition-shadow relative [&>svg]:hidden pl-[3px] pr-[3px]"
-                        style={{
-                          border: "2px solid var(--theme-200)",
-                          color: "var(--theme-900)",
-                          minHeight: "56px",
-                          maxWidth: "100%",
-                          overflow: "hidden",
-                        }}
-                      >
-                        <SelectValue asChild>
-                          <div
-                            className="text-left leading-tight break-words overflow-hidden w-full flex items-center justify-start pr-6"
-                            style={{
-                              wordWrap: "break-word",
-                              overflowWrap: "break-word",
-                              hyphens: "auto",
-                              whiteSpace: "normal",
-                              lineHeight: "1.2",
-                            }}
-                          >
-                            {assignedMeal || "Add meal"}
-                          </div>
-                        </SelectValue>
-                        <ChevronDown
-                          className="h-3 w-3 absolute bottom-1 right-1 pointer-events-none"
-                          style={{ color: "var(--theme-600)" }}
-                        />
-                      </SelectTrigger>
-
-                      <SelectContent
-                        className="max-h-60 rounded-2xl"
-                        style={{ border: "2px solid var(--theme-200)" }}
-                      >
+                      <SelectValue asChild>
                         <div
-                          className="px-2 py-1 text-sm border-b rounded-t-2xl"
+                          className="text-left leading-tight break-words overflow-hidden w-full flex items-center justify-start pr-6"
                           style={{
-                            color: "var(--theme-700)",
-                            backgroundColor: "var(--theme-50)",
+                            wordWrap: "break-word",
+                            overflowWrap: "break-word",
+                            hyphens: "auto",
+                            whiteSpace: "normal",
+                            lineHeight: "1.2",
                           }}
                         >
-                          Select a meal...
+                          {assignedMeal || "Add meal"}
                         </div>
-                        {mealList.map((meal) => (
-                          <SelectItem
-                            key={meal}
-                            value={meal}
-                            className="text-sm rounded-xl mx-1 hover:shadow-sm"
-                            style={
-                              {
-                                "--hover-bg": "var(--theme-50)",
-                              } as React.CSSProperties
-                            }
+                      </SelectValue>
+                      <ChevronDown
+                        className="h-3 w-3 absolute bottom-1 right-1 pointer-events-none"
+                        style={{ color: "var(--theme-600)" }}
+                      />
+                    </SelectTrigger>
+
+                    <SelectContent
+                      className="max-h-60 rounded-2xl"
+                      style={{ border: "2px solid var(--theme-200)" }}
+                    >
+                      <div
+                        className="px-2 py-1 text-sm border-b rounded-t-2xl"
+                        style={{
+                          color: "var(--theme-700)",
+                          backgroundColor: "var(--theme-50)",
+                        }}
+                      >
+                        Select a meal...
+                      </div>
+                      {mealList.map((meal) => (
+                        <SelectItem
+                          key={meal}
+                          value={meal}
+                          className="text-sm rounded-xl mx-1 hover:shadow-sm"
+                          style={
+                            {
+                              "--hover-bg": "var(--theme-50)",
+                            } as React.CSSProperties
+                          }
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.backgroundColor =
+                              "var(--theme-50)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.backgroundColor =
+                              "transparent")
+                          }
+                        >
+                          <div className="flex items-left gap-2 w-full">
+                            {/* {assignedMeal === meal && (
+                                <Check
+                                  className="h-4 w-4"
+                                  style={{ color: "var(--theme-600)" }}
+                                />
+                              )} */}
+                            {assignedMeal !== meal && <div className="w-4" />}
+                            <span style={{ color: "var(--theme-900)" }}>
+                              {meal}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+
+                      <Dialog open={showAddMeal} onOpenChange={setShowAddMeal}>
+                        <DialogTrigger asChild>
+                          <div
+                            className="flex items-left gap-2 px-2 py-2 text-sm cursor-pointer border-t rounded-b-2xl transition-colors"
+                            style={{ color: "var(--theme-600)" }}
                             onMouseEnter={(e) =>
                               (e.currentTarget.style.backgroundColor =
                                 "var(--theme-50)")
@@ -294,104 +325,72 @@ export default function WeekPlanGrid({
                                 "transparent")
                             }
                           >
-                            <div className="flex items-left gap-2 w-full">
-                              {/* {assignedMeal === meal && (
-                                <Check
-                                  className="h-4 w-4"
-                                  style={{ color: "var(--theme-600)" }}
-                                />
-                              )} */}
-                              {assignedMeal !== meal && <div className="w-4" />}
-                              <span style={{ color: "var(--theme-900)" }}>
-                                {meal}
-                              </span>
-                            </div>
-                          </SelectItem>
-                        ))}
-
-                        <Dialog
-                          open={showAddMeal}
-                          onOpenChange={setShowAddMeal}
+                            <Plus className="h-4 w-4" />
+                            <span>Add New Meal</span>
+                          </div>
+                        </DialogTrigger>
+                        <DialogContent
+                          className="sm:max-w-md cute-card"
+                          style={{ border: "4px solid var(--theme-300)" }}
                         >
-                          <DialogTrigger asChild>
-                            <div
-                              className="flex items-left gap-2 px-2 py-2 text-sm cursor-pointer border-t rounded-b-2xl transition-colors"
-                              style={{ color: "var(--theme-600)" }}
-                              onMouseEnter={(e) =>
-                                (e.currentTarget.style.backgroundColor =
-                                  "var(--theme-50)")
-                              }
-                              onMouseLeave={(e) =>
-                                (e.currentTarget.style.backgroundColor =
-                                  "transparent")
-                              }
+                          <DialogHeader>
+                            <DialogTitle
+                              className="font-handwritten text-xl"
+                              style={{ color: "var(--theme-900)" }}
                             >
-                              <Plus className="h-4 w-4" />
-                              <span>Add New Meal</span>
-                            </div>
-                          </DialogTrigger>
-                          <DialogContent
-                            className="sm:max-w-md cute-card"
-                            style={{ border: "4px solid var(--theme-300)" }}
-                          >
-                            <DialogHeader>
-                              <DialogTitle
-                                className="font-handwritten text-xl"
-                                style={{ color: "var(--theme-900)" }}
+                              Add New Meal
+                            </DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <Input
+                              placeholder="Enter meal name"
+                              value={newMealName}
+                              onChange={(e) => setNewMealName(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  addNewMeal();
+                                }
+                              }}
+                              className="cute-input"
+                            />
+                            <div className="flex gap-2">
+                              <Button
+                                onClick={addNewMeal}
+                                className="cute-button flex-1"
                               >
-                                Add New Meal
-                              </DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                              <Input
-                                placeholder="Enter meal name"
-                                value={newMealName}
-                                onChange={(e) => setNewMealName(e.target.value)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter") {
-                                    addNewMeal();
-                                  }
+                                Add Meal
+                              </Button>
+                              <Button
+                                variant="outline"
+                                onClick={() => {
+                                  setShowAddMeal(false);
+                                  setNewMealName("");
                                 }}
-                                className="cute-input"
-                              />
-                              <div className="flex gap-2">
-                                <Button
-                                  onClick={addNewMeal}
-                                  className="cute-button flex-1"
-                                >
-                                  Add Meal
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  onClick={() => {
-                                    setShowAddMeal(false);
-                                    setNewMealName("");
-                                  }}
-                                  className="rounded-2xl font-medium transition-colors hover:shadow-sm"
-                                  style={{
-                                    border: "2px solid var(--theme-200)",
-                                    color: "var(--theme-700)",
-                                  }}
-                                  onMouseEnter={(e) =>
-                                    (e.currentTarget.style.backgroundColor =
-                                      "var(--theme-50)")
-                                  }
-                                  onMouseLeave={(e) =>
-                                    (e.currentTarget.style.backgroundColor =
-                                      "transparent")
-                                  }
-                                >
-                                  Cancel
-                                </Button>
-                              </div>
+                                className="rounded-2xl font-medium transition-colors hover:shadow-sm"
+                                style={{
+                                  border: "2px solid var(--theme-200)",
+                                  color: "var(--theme-700)",
+                                }}
+                                onMouseEnter={(e) =>
+                                  (e.currentTarget.style.backgroundColor =
+                                    "var(--theme-50)")
+                                }
+                                onMouseLeave={(e) =>
+                                  (e.currentTarget.style.backgroundColor =
+                                    "transparent")
+                                }
+                              >
+                                Cancel
+                              </Button>
                             </div>
-                          </DialogContent>
-                        </Dialog>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                );
-              })
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </SelectContent>
+                  </Select>
+                </div>
+              );
+            }),
           ])}
         </div>
       </div>
