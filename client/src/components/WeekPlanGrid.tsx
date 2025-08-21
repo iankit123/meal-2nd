@@ -191,7 +191,7 @@ export default function WeekPlanGrid({
         </Button>
       </div>
       {/* Week Plan Grid */}
-      <div className="cute-card overflow-hidden w-full p-0">
+      <div className="cute-card overflow-hidden w-full p-0 pl-[6px] pr-[6px]">
         {/* Strict Grid Container with Fixed Columns */}
         <div
           className="grid gap-2"
