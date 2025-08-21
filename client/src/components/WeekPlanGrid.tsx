@@ -253,11 +253,14 @@ export default function WeekPlanGrid({
                             hyphens: "auto",
                             whiteSpace: "normal",
                             lineHeight: "1.2",
+                            color: assignedMeal ? "var(--theme-900)" : "red", // 👈 highlight empty
+                            fontWeight: assignedMeal ? "normal" : "600", // optional: bold when empty
                           }}
                         >
                           {assignedMeal || "Add meal"}
                         </div>
                       </SelectValue>
+
                       <ChevronDown
                         className="h-3 w-3 absolute bottom-1 right-1 pointer-events-none"
                         style={{ color: "var(--theme-600)" }}
