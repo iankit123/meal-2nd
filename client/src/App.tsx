@@ -51,7 +51,7 @@ function Router() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="max-w-md mx-auto px-4 pb-8 mt-[12px] mb-[12px]">
+      <main className="max-w-md mx-auto px-4 pb-8 mt-[12px] mb-[12px] pl-[7px] pr-[7px]">
         <Switch>
           {/* Redirect root "/" → "/week-plan" */}
           <Route path="/" component={() => <Redirect to="/week-plan" />} />
