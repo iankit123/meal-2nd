@@ -188,9 +188,8 @@ export default function WeekPlanGrid({
           {isSaving ? "Saving..." : "Save Changes"}
         </Button>
       </div>
-
       {/* Week Plan Grid */}
-      <div className="cute-card overflow-hidden w-full">
+      <div className="cute-card overflow-hidden w-full pl-[3px] pr-[3px]">
         {/* Strict Grid Container with Fixed Columns */}
         <div
           className="grid gap-2"
