@@ -24,23 +24,10 @@ const getCurrentUsername = (): string => {
   return localStorage.getItem('mealplanner-username') || 'anonymous';
 };
 
-// Week Plan Storage
+// Week Plan Storage - Firebase Primary (No fallbacks)
 export const getWeekPlanData = async (): Promise<WeekPlanData | null> => {
   const username = getCurrentUsername();
   
-  // Try server API first (more reliable)
-  try {
-    const response = await fetch(`/api/weekplan/${username}`);
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Week plan data retrieved from server:', data);
-      return data;
-    }
-  } catch (serverError) {
-    console.warn('Server API unavailable for week plan retrieval:', serverError);
-  }
-
-  // Fallback to Firebase
   try {
     const docRef = doc(db, 'weekPlans', username);
     const docSnap = await getDoc(docRef);
@@ -53,28 +40,29 @@ export const getWeekPlanData = async (): Promise<WeekPlanData | null> => {
         ...data,
         updatedAt: data.updatedAt?.toDate() || new Date(),
       };
+    } else {
+      // Return empty week plan for new users
+      const emptyPlan = {
+        uid: username,
+        slots: {
+          monday: {},
+          tuesday: {},
+          wednesday: {},
+          thursday: {},
+          friday: {},
+          saturday: {},
+          sunday: {},
+        },
+        updatedAt: new Date(),
+      };
+      
+      console.log('No existing week plan found, returning empty plan for:', username);
+      return emptyPlan;
     }
   } catch (error) {
-    console.warn('Firebase unavailable for week plan retrieval:', error);
+    console.error('Firebase error retrieving week plan:', error);
+    throw new Error('Unable to retrieve meal plan. Please check your internet connection and try again.');
   }
-  
-  // Return empty week plan structure
-  const emptyPlan = {
-    uid: username,
-    slots: {
-      monday: {},
-      tuesday: {},
-      wednesday: {},
-      thursday: {},
-      friday: {},
-      saturday: {},
-      sunday: {},
-    },
-    updatedAt: new Date(),
-  };
-  
-  console.log('Returning empty week plan for username:', username);
-  return emptyPlan;
 };
 
 export const saveWeekPlanData = async (slots: any): Promise<void> => {
@@ -85,29 +73,18 @@ export const saveWeekPlanData = async (slots: any): Promise<void> => {
     updatedAt: new Date(),
   };
 
-  // Try Firebase first
+  // Use Firebase as primary storage (no fallbacks for cross-browser persistence)
   try {
     const docRef = doc(db, 'weekPlans', username);
-    await setDoc(docRef, { ...weekPlanData, updatedAt: new Date() }, { merge: true });
-    return;
+    await setDoc(docRef, weekPlanData, { merge: true });
+    console.log('Week plan saved to Firebase successfully');
   } catch (error) {
-    console.warn('Firebase unavailable for week plan save:', error);
-  }
-
-  // Fallback to server API
-  try {
-    await fetch(`/api/weekplan/${username}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(weekPlanData),
-    });
-  } catch (serverError) {
-    console.error('Both Firebase and server unavailable for week plan save:', serverError);
-    throw new Error('Unable to save week plan - all storage methods failed');
+    console.error('Firebase error saving week plan:', error);
+    throw new Error('Unable to save meal plan. Please check your internet connection and try again.');
   }
 };
 
-// Recipe Storage
+// Recipe Storage - Firebase Primary (No fallbacks)
 export const getRecipesData = async (): Promise<RecipeData[]> => {
   try {
     const q = query(collection(db, 'recipes'), orderBy('createdAt', 'desc'));
@@ -118,10 +95,9 @@ export const getRecipesData = async (): Promise<RecipeData[]> => {
       ...doc.data(),
       createdAt: doc.data().createdAt?.toDate() || new Date(),
       updatedAt: doc.data().updatedAt?.toDate() || new Date(),
-    }));
+    })) as RecipeData[];
   } catch (error) {
-    console.warn('Firebase unavailable for recipes:', error);
-    // For now, return empty array since recipes are less critical for testing isolation
-    return [];
+    console.error('Firebase error retrieving recipes:', error);
+    throw new Error('Unable to retrieve recipes. Please check your internet connection and try again.');
   }
 };
