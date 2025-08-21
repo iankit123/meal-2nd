@@ -8,8 +8,6 @@ export default function Header() {
   const [location] = useLocation();
   const { username, logout } = useAuth();
 
-
-
   const navItems = [
     {
       path: "/week-plan",
@@ -17,7 +15,12 @@ export default function Header() {
       icon: Calendar,
       active: location === "/week-plan",
     },
-    { path: "/", label: "All Meals", icon: Utensils, active: location === "/" },
+    {
+      path: "/all-meals",
+      label: "All Meals",
+      icon: Utensils,
+      active: location === "/all-meals",
+    },
     {
       path: "/bookmarks",
       label: "Bookmarks",
@@ -65,7 +68,7 @@ export default function Header() {
       }}
     >
       <div className="max-w-md mx-auto px-6 py-6">
-        {/* Top Header Section - Inspired by the reference image */}
+        {/* Top Header Section */}
         <div className="flex items-center justify-between mb-6">
           {/* Left Star Icon */}
           <div className="transform rotate-12">
@@ -77,7 +80,7 @@ export default function Header() {
           </div>
 
           {/* Centered Title */}
-          <Link href="/" className="flex-1 text-center">
+          <Link href="/week-plan" className="flex-1 text-center">
             <h1
               className="text-3xl font-handwritten font-bold transform -rotate-1"
               style={{ color: "var(--theme-900)" }}
@@ -95,13 +98,18 @@ export default function Header() {
               className="p-2 rounded-full hover:bg-white/20 transition-colors"
               title={`Logout ${username}`}
             >
-              <LogOut className="w-4 h-4" style={{ color: "var(--theme-600)" }} />
+              <LogOut
+                className="w-4 h-4"
+                style={{ color: "var(--theme-600)" }}
+              />
             </Button>
             <div className="transform rotate-6">
               <img
                 src={catMascotImage}
                 alt="Cute cat mascot"
-                className={`rounded-2xl shadow-lg ${location === "/" ? "w-16 h-16" : "w-12 h-12"}`}
+                className={`rounded-2xl shadow-lg ${
+                  location === "/week-plan" ? "w-16 h-16" : "w-12 h-12"
+                }`}
                 style={{
                   border: "3px solid var(--theme-200)",
                   background: "white",

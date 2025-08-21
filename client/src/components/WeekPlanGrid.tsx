@@ -168,7 +168,7 @@ export default function WeekPlanGrid({
             className="text-2xl font-handwritten font-bold transform -rotate-1"
             style={{ color: "var(--theme-900)" }}
           >
-            Weekly Meal Plan
+            Create Week's Plan
           </h1>
           {hasChanges && (
             <span className="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-600 font-medium">
@@ -191,7 +191,7 @@ export default function WeekPlanGrid({
         </Button>
       </div>
       {/* Week Plan Grid */}
-      <div className="cute-card overflow-hidden w-full p-0 pl-[4px] pr-[4px]">
+      <div className="cute-card overflow-hidden w-full p-0">
         {/* Strict Grid Container with Fixed Columns */}
         <div
           className="grid gap-2"
